@@ -84,7 +84,6 @@ def main():
             print("directory " + wavedir)
             print("mean time per file: " + str((time.time()-check)/log) + " sec")
             check = time.time()
-            return 0
 
         with open(file_path, "rb") as opened_pcm_file:
             pcm_data = opened_pcm_file.read()
