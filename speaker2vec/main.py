@@ -60,8 +60,8 @@ def make_dataset():
         file_paths.append([folder, filename])
 
     f = open("./file_paths.txt", "w")
-    for path in file_paths:
-        f.write(path+'\n')
+    for file_path in file_paths:
+        f.write(file_path+'\n')
     f.close()
 
     # Read Data
