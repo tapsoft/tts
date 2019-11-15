@@ -85,7 +85,7 @@ def make_dataset():
 
 
 def main():
-    pass
+    make_dataset()
 
 
 if __name__ == "__main__":
