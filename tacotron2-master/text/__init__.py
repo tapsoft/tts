@@ -1,7 +1,17 @@
 """ from https://github.com/keithito/tacotron """
 import re
-from text import cleaners
-from text.symbols import symbols
+#from text import cleaners
+#from text.symbols import symbols
+import torch
+import torch.utils.data
+
+_pad        = '_'
+_punctuation = '!\'(),.:;? '
+_special = '-'
+_letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+
+###### TODO
+symbols = [_pad] + list(_special) + list(_punctuation) + list(_letters)
 
 
 # Mappings from symbol to numeric ID and vice versa:
@@ -37,7 +47,7 @@ def text_to_sequence(text):
     sequence += _arpabet_to_sequence(m.group(2))
     text = m.group(3)
 
-  print(sequence)
+  #print(sequence)
   return sequence
 
 
@@ -64,3 +74,5 @@ def _arpabet_to_sequence(text):
 
 def _should_keep_symbol(s):
   return s in _symbol_to_id and s is not '_' and s is not '~'
+
+#print (torch.IntTensor(text_to_sequence('abasdgh')))
