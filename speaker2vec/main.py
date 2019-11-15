@@ -19,6 +19,7 @@ import random
 file_paths = []
 FILE_PATHS = "./file_paths.txt"
 
+
 def get_pairs():
     pass
 
@@ -35,10 +36,10 @@ def evaluate():
     pass
 
 
-def make_dataset():
+def make_paths():
+    print("constructing file paths")
     # list of audio data paths
     for i in range(4):
-        path = []
         base_folder = '/data/KsponSpeech_0' + str(i + 1)
         for j in range(124):
             folder_index = str(124 * i + j + 1)
@@ -62,16 +63,28 @@ def make_dataset():
 
     f = open(FILE_PATHS, "w")
     for file_path in file_paths:
-        print(file_path)
         f.write(file_path+'\n')
+        f.close()
+
+
+def import_paths():
+    print("loading file paths")
+    f = open(FILE_PATHS, "r")
+    lines = f.readlines()
+    for line in lines:
+        file_paths.append(line)
     f.close()
+
+
+def split_dataset():
+    pass
 
 
 def main():
     if not os.path.isfile(FILE_PATHS):
-        make_dataset()
+        make_paths()
     else:
-        print("dataset path loaded")
+        import_paths()
 
 
 if __name__ == "__main__":
