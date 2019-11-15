@@ -69,9 +69,9 @@ def main():
     check = time.time()
     # convert each .pcm files to .wav files and save
     for i, file_path in enumerate(file_paths):
-        if i % 100 == 0:
+        if i % 100 == 1:
             print("processing " + file_path)
-            print("mean time per file: " + str((time.time()-check)/100))
+            print("mean time per file: " + str((time.time()-check)/100) + " sec")
             check = time.time()
 
         with open(file_path, "rb") as opened_pcm_file:
