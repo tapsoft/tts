@@ -86,6 +86,9 @@ def main():
     else:
         import_paths()
 
+    for i in range(100):
+        print(file_paths[i])
+
 
 if __name__ == "__main__":
     main()
