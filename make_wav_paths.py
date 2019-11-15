@@ -24,7 +24,7 @@ def make_paths():
             filename = '/KsponSpeech_' + file_index + '.wav'
             file_paths.append(folder + filename)
 
-    for k in range(622001, 622545+1):
+    for k in range(622001, 622545):
         file_index = str(k)
         folder = '/data/KsponSpeech_wav/KsponSpeech_0623'
         filename = '/KsponSpeech_' + file_index + '.wav'
