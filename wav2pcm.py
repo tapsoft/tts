@@ -78,7 +78,7 @@ def main():
 
         with open(file_path, "rb") as opened_pcm_file:
             pcm_data = opened_pcm_file.read()
-            wavefile = file_path[-22:-3] + "wav"
+            wavefile = W_PATH + file_path[-22:-3] + "wav"
             print(wavefile)
             obj2write = wave.open(wavefile, "wb")
             obj2write.setnchannels(channels)
