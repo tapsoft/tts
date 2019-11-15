@@ -78,7 +78,7 @@ def main():
             pass
 
         wavefile = W_PATH + file_path[-39:-3] + "wav"
-        if i % log == 0 and i != 0:
+        if i % log == 0:
             print("processing " + file_path)
             print("saved at " + wavefile)
             print("directory " + wavedir)
