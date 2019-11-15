@@ -70,15 +70,16 @@ def main():
     check = time.time()
     # convert each .pcm files to .wav files and save
     for i, file_path in enumerate(file_paths):
+        wavefile = W_PATH + file_path[-22:-3] + "wav"
         if i % 100 == 0 and i != 0:
             print("processing " + file_path)
+            print("saved at " + wavefile)
             print("mean time per file: " + str((time.time()-check)/100) + " sec")
             check = time.time()
+            return 0
 
         with open(file_path, "rb") as opened_pcm_file:
             pcm_data = opened_pcm_file.read()
-            wavefile = W_PATH + file_path[-22:-3] + "wav"
-            print(wavefile)
             obj2write = wave.open(wavefile, "wb")
             obj2write.setnchannels(channels)
             obj2write.setsampwidth(bit_depth // 8)
