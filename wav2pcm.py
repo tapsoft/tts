@@ -68,15 +68,15 @@ def main():
         print(file_paths[i])
 
     check = time.time()
+    log = 1000
     # convert each .pcm files to .wav files and save
     for i, file_path in enumerate(file_paths):
         wavefile = W_PATH + file_path[-22:-3] + "wav"
-        if i % 100 == 0 and i != 0:
+        if i % log == 0 and i != 0:
             print("processing " + file_path)
             print("saved at " + wavefile)
-            print("mean time per file: " + str((time.time()-check)/100) + " sec")
+            print("mean time per file: " + str((time.time()-check)/log) + " sec")
             check = time.time()
-            return 0
 
         with open(file_path, "rb") as opened_pcm_file:
             pcm_data = opened_pcm_file.read()
