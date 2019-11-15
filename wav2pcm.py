@@ -71,7 +71,7 @@ def main():
     log = 1000
     # convert each .pcm files to .wav files and save
     for i, file_path in enumerate(file_paths):
-        wavedir = W_PATH + file_path[-39:22]
+        wavedir = W_PATH + file_path[-39:-22]
         try:
             os.mkdir(wavedir)
         except FileExistsError:
