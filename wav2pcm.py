@@ -74,7 +74,7 @@ def main():
         wavedir = W_PATH + file_path[-39:-22]
         try:
             os.mkdir(wavedir)
-        except FileExistsError:
+        except WindowsError:
             pass
 
         wavefile = W_PATH + file_path[-39:-3] + "wav"
