@@ -59,7 +59,10 @@ def make_dataset():
         filename = 'KsponSpeech_' + file_index + '.pcm'
         file_paths.append([folder, filename])
 
-    print(file_paths)
+    f = open("./file_paths.txt", "w")
+    for path in file_paths:
+        f.write(path+'\n')
+    f.close()
 
     # Read Data
     '''
