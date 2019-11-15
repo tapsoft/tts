@@ -64,7 +64,7 @@ def main():
         make_paths()
     else:
         import_paths()
-    for i in range(100):
+    for i in range(10):
         print(file_paths[i])
 
     check = time.time()
@@ -79,6 +79,7 @@ def main():
         with open(file_path, "rb") as opened_pcm_file:
             pcm_data = opened_pcm_file.read()
             wavefile = file_path[-22:-3] + "wav"
+            print(wavefile)
             obj2write = wave.open(wavefile, "wb")
             obj2write.setnchannels(channels)
             obj2write.setsampwidth(bit_depth // 8)
