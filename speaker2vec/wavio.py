@@ -57,24 +57,14 @@ def _wav2array(nchannels, sampwidth, data):
     return result
 
 
-def readpcm(file, channels=1, bit_depth=16, sampling_rate=16000):
+def readwav(file):
     """
     Read a wav file.
     Returns the frame rate, sample width (in bytes) and a numpy array
     containing the data.
     This function does not read compressed wav files.
     """
-    with open(file, "rb") as opened_pcm_file:
-        pcm_data = opened_pcm_file.read()
-        wavfile = file[:-3] + "wav"
-        obj2write = wave.open(file[:-3]+"wav", "wb")
-        obj2write.setnchannels(channels)
-        obj2write.setsampwidth(bit_depth // 8)
-        obj2write.setframerate(sampling_rate)
-        obj2write.writeframes(pcm_data)
-        obj2write.close()
-
-    wav = wave.open(wavfile)
+    wav = wave.open(file)
     rate = wav.getframerate()
     nchannels = wav.getnchannels()
     sampwidth = wav.getsampwidth()
