@@ -17,6 +17,7 @@ import random
 #from models import AutoEncoder
 
 file_paths = []
+FILE_PATHS = "./file_paths.txt"
 
 def get_pairs():
     pass
@@ -59,37 +60,18 @@ def make_dataset():
         filename = '/KsponSpeech_' + file_index + '.pcm'
         file_paths.append(folder + filename)
 
-    f = open("./file_paths.txt", "w")
+    f = open(FILE_PATHS, "w")
     for file_path in file_paths:
         print(file_path)
         f.write(file_path+'\n')
     f.close()
 
-    # Read Data
-    '''
-    transcripts = []
-    total_english_words = []
-    error_files = []
-    for i in range(5):
-        for file in file_paths[i]:
-            folder, filename = file[0], file[1]
-            result = check_file_text(folder + '/' + filename)
-
-            if result[0] == 'parsed':
-                processed_line, english_words = result[1], result[2]
-                # transcripts.append([filename, processed_line])
-                transcripts.append([folder + '/' + filename.replace('.txt', '.pcm'), processed_line])
-                if len(english_words) > 0:
-                    total_english_words.append([filename, english_words])
-            else:
-                filename, ex = result[1], result[2]
-                error_files.append([filename, ex])
-        print('Reading folder ' + str(i + 1) + ' is finished')
-        '''
-
 
 def main():
-    make_dataset()
+    if not os.path.isfile(FILE_PATHS):
+        make_dataset()
+    else:
+        print("dataset path loaded")
 
 
 if __name__ == "__main__":
