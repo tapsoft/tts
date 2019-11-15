@@ -71,7 +71,7 @@ def main():
     log = 1000
     # convert each .pcm files to .wav files and save
     for i, file_path in enumerate(file_paths):
-        wavefile = W_PATH + file_path[-40:-3] + "wav"
+        wavefile = W_PATH + file_path[-39:-3] + "wav"
         if i % log == 0 and i != 0:
             print("processing " + file_path)
             print("saved at " + wavefile)
