@@ -72,7 +72,7 @@ def import_paths():
     f = open(FILE_PATHS, "r")
     lines = f.readlines()
     for line in lines:
-        file_paths.append(line)
+        file_paths.append(line[:-1])
     f.close()
 
 
