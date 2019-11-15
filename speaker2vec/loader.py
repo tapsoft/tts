@@ -2,7 +2,6 @@
 import os
 import sys
 import math
-import wavio
 import time
 import torch
 import random
@@ -11,6 +10,12 @@ import logging
 from torch.utils.data import Dataset, DataLoader
 import numpy as np
 from preprocessing import trim
+from wavio import readwav
+
+logger = logging.getLogger('root')
+FORMAT = "[%(asctime)s %(filename)s:%(lineno)s - %(funcName)s()] %(message)s"
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format=FORMAT)
+logger.setLevel(logging.INFO)
 
 PAD = 0
 N_FFT = 512
@@ -18,12 +23,12 @@ SAMPLE_RATE = 16000
 
 target_dict = dict()
 
-def load_targets():
-    pass
 
+def get_mfcc_feature(filepath):
+    (rate, width, sig) = readwav(filepath)
+    sig = sig.ravel()
+    sig = trim(sig)
 
-def get_mfcc_feature():
-    pass
 
 class BaseDataset(Dataset):
     def __init(self):
