@@ -71,10 +71,17 @@ def main():
     log = 1000
     # convert each .pcm files to .wav files and save
     for i, file_path in enumerate(file_paths):
+        wavedir = W_PATH + file_path[-39:22]
+        try:
+            os.mkdir(wavedir)
+        except FileExistsError:
+            pass
+
         wavefile = W_PATH + file_path[-39:-3] + "wav"
         if i % log == 0 and i != 0:
             print("processing " + file_path)
             print("saved at " + wavefile)
+            print("directory " + wavedir)
             print("mean time per file: " + str((time.time()-check)/log) + " sec")
             check = time.time()
             return 0
