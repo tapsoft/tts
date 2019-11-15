@@ -4,6 +4,7 @@ import time
 import wave
 
 FILE_PATHS = "./speaker2vec/file_paths.txt"
+W_PATH = "/data/KsponSpeech_wav/"
 file_paths = []
 channels = 1
 bit_depth = 16
@@ -69,14 +70,15 @@ def main():
     check = time.time()
     # convert each .pcm files to .wav files and save
     for i, file_path in enumerate(file_paths):
-        if i % 100 == 1:
+        if i % 100 == 0 and i != 0:
             print("processing " + file_path)
             print("mean time per file: " + str((time.time()-check)/100) + " sec")
             check = time.time()
+            return 0
 
         with open(file_path, "rb") as opened_pcm_file:
             pcm_data = opened_pcm_file.read()
-            wavefile = file_path[:-3] + "wav"
+            wavefile = file_path[-22:-3] + "wav"
             obj2write = wave.open(wavefile, "wb")
             obj2write.setnchannels(channels)
             obj2write.setsampwidth(bit_depth // 8)
