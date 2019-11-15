@@ -74,7 +74,6 @@ def main():
             print("processing " + file_path)
             print("mean time per file: " + str((time.time()-check)/100) + " sec")
             check = time.time()
-            return 0
 
         with open(file_path, "rb") as opened_pcm_file:
             pcm_data = opened_pcm_file.read()
