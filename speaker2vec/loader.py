@@ -146,7 +146,7 @@ class BaseDataLoader(threading.Thread):
                 if self.index >= self.dataset_count:
                     break
                 item = self.dataset[self.index]
-                logger.info('obtained item shape (%d, %d)' % (item.shape[0], item.shape[1]))
+                logger.debug('obtained item shape (%d, %d)' % (item.shape[0], item.shape[1]))
                 items.append(item)
                 self.index += 1
 
