@@ -8,7 +8,6 @@ import threading
 import logging
 from torch.utils.data import Dataset
 import numpy as np
-import warnings
 import scipy.io.wavfile as wav
 from trim import trim
 from python_speech_features import mfcc
@@ -17,7 +16,7 @@ from main import n_mfcc, n_frames
 logger = logging.getLogger('root')
 FORMAT = "[%(asctime)s %(filename)s:%(lineno)s - %(funcName)s()] %(message)s"
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format=FORMAT)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 # input sliding window
 hop_frames = 100
