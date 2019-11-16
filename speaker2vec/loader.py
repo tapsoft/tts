@@ -21,27 +21,6 @@ logger.setLevel(logging.DEBUG)
 # input sliding window
 hop_frames = 100
 
-
-def get_feature(filepath, sr=16000):
-    # return mfcc feature as a numpy array with shape (n_mfcc, t)
-    # load audio file
-    logger.debug("file: " + filepath[-22:])
-    y, _ = librosa.load(filepath, mono=True, sr=sr)
-    logger.debug('loaded, lenth %d' % y.shape[0])
-
-    # trim silence
-    yt, idx = librosa.effects.trim(y, top_db=25)
-    logger.debug('trimmed, lenth %d' % yt.shape[0])
-
-    # extract mfcc features
-    # 40 mel-space filters, 25ms hamming window, 10ms shift
-    feat = librosa.feature.mfcc(y=yt, sr=sr, n_mfcc=n_mfcc, hop_length=int(sr*0.01), n_fft=int(sr*0.025))
-    logger.debug("feature obtained, shape (%d, %d)" % (feat.shape[0], feat.shape[1]))
-
-    del y, yt
-    return feat
-
-
 class BaseDataset(Dataset):
     # custom dataset class
     def __init__(self, file_paths, train_mode=False):
@@ -52,9 +31,26 @@ class BaseDataset(Dataset):
         # return dataset size
         return len(self.file_paths)
 
-    def __getitem__(self, idx):
-        # return loaded numpy array with shape shape (n_mfcc, t)
-        feat = get_feature(self.file_paths[idx])
+    def __getitem__(self, idx, sr=16000):
+        # return mfcc feature as a numpy array with shape (n_mfcc, t)
+        filepath = self.file_paths[idx]
+
+        # load audio file
+        logger.debug("file: " + filepath[-22:])
+        y, _ = librosa.load(filepath, mono=True, sr=sr)
+        logger.debug('loaded, length %d' % y.shape[0])
+
+        # trim silence
+        yt, idx = librosa.effects.trim(y, top_db=25)
+        logger.debug('trimmed, length %d' % yt.shape[0])
+
+        # extract mfcc features
+        # 40 mel-space filters, 25ms hamming window, 10ms shift
+        feat = librosa.feature.mfcc(y=yt, sr=sr, n_mfcc=n_mfcc, hop_length=int(sr * 0.01), n_fft=int(sr * 0.025))
+        logger.debug("feature obtained, shape (%d, %d)" % (feat.shape[0], feat.shape[1]))
+
+        del y, yt
+
         return feat
 
 
