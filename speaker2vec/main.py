@@ -1,13 +1,13 @@
-#import os
-#import sys
-#import math
-#import time
+import os
+import sys
+import math
+import time
 import queue
-#import random
-#import torch
+import random
+import torch
 import torch.nn as nn
 import torch.optim as optim
-#import numpy as np
+import numpy as np
 #import matplotlib.pyplot as plt
 from loader import *
 from AutoEncoder import AutoEncoder
@@ -16,15 +16,16 @@ from AutoEncoder import AutoEncoder
 # FILE_PATHS = "D:/GitHub_Repos/zeroshot-tts-korean/file_paths.txt"
 FILE_PATHS = "/home/cs470/zeroshot-tts-korean/file_paths.txt"
 file_paths = []
+SAVE_PATH = "/home/cd470/zeroshot-tts-korean/speaker2vec/checkpoints/"
 
 # preprocessing
 n_mfcc = 40
 n_frames = 100
 
 # hyperparameters
-max_epochs = 2
-batch_size = 32
-learning_rate = 1e-5
+max_epochs = 10
+batch_size = 16
+learning_rate = 1e-4
 valid_ratio = 0.01
 num_workers = 1
 
@@ -32,7 +33,6 @@ num_workers = 1
 def train(model, total_batch_size, queue, criterion, optimizer, device, train_begin, train_loader_count, print_batch=5):
     print_loss = 0.
     total_loss = 0
-    total_num = 0
     batch = 0
 
     # set model to train mode
@@ -83,7 +83,6 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
         loss = criterion(output.contiguous().view(-1), targets.contiguous().view(-1))
         print_loss += loss.item()
         total_loss += loss.item()
-        total_num += 1
 
         # backward pass
         loss.backward()
@@ -110,19 +109,24 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
     # finish logging
     logger.info('train() completed')
 
-    return total_loss / total_num
+    return total_loss / batch
 
 
 def evaluate(model, dataloader, queue, criterion, device):
-    logger.info('evaluate() start')
     total_loss = 0.
-    total_num = 0
+    batch = 0
 
     # set model to eval mode
     model.eval()
 
+    # begin logging
+    logger.info('evaluate() start')
+    begin = time.time()
+
     with torch.no_grad():
         while True:
+            batch += 1
+
             # input, target tensor shapes: (batch_size, n_mfcc, n_frames)
             inputs, targets = queue.get()
             batch_size = inputs.shape[0]
@@ -142,12 +146,30 @@ def evaluate(model, dataloader, queue, criterion, device):
             # compute loss
             loss = criterion(output.contiguous().view(-1), targets.contiguous().view(-1))
             total_loss += loss.item()
-            total_num += batch_size
 
     # finish logging
     logger.info('evaluate() completed')
 
-    return total_loss / total_num
+    return total_loss / batch
+
+
+def load(filename, model, optimizer):
+    state = torch.load(filename)
+    model.load_state_dict(state['model'])
+    if 'optimizer' in state and optimizer:
+        optimizer.load_state_dict(state['optimizer'])
+    logger.info('checkpoint loaded')
+    return state['best_loss']
+
+
+def save(filename, model, optimizer, best_loss):
+    state = {
+        'model': model.state_dict(),
+        'optimizer': optimizer.state_dict(),
+        'best_loss': best_loss
+    }
+    torch.save(state, filename)
+    logger.info('checkpoint saved')
 
 
 def import_paths():
@@ -218,6 +240,15 @@ def main():
     optimizer = optim.Adam(model.module.parameters(), lr=learning_rate)
     criterion = nn.MSELoss(reduction='mean').to(device)
 
+    # load pre-trained model
+    try:
+        logger.info('loading checkpoint...')
+        loaded_loss = load(SAVE_PATH, model, optimizer)
+    except RuntimeError:
+        logger.info('no checkpoint loaded')
+    else:
+        logger.info('checkpoint loaded; current best loss %0.4f' % loaded_loss)
+
     # import data file paths
     import_paths()
     for i in range(10):
@@ -238,7 +269,7 @@ def main():
 
     train_begin = time.time()
     for epoch in range(begin_epoch, max_epochs):
-        print("epoch", epoch)
+        print("epoch", epoch+1)
 
         train_queue = queue.Queue(num_workers * 2)
         train_loader = MultiLoader(train_dataset_list, train_queue, batch_size, num_workers)
@@ -259,13 +290,16 @@ def main():
         print("end eval")
 
         # save every epoch
-        save_name = "model_%03d" % epoch
+        save_name = SAVE_PATH + "model_%03d" % epoch + ".pt"
+        save(save_name, model, optimizer, train_loss)
 
         # save best loss model
         is_best_loss = (eval_loss < best_loss)
         if is_best_loss:
             print("best model: " + save_name)
             best_loss = eval_loss
+            save_name = SAVE_PATH + "best_eval.pt"
+            save(save_name, model, optimizer, best_loss)
 
     return 0
 
