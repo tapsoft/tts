@@ -48,7 +48,7 @@ class BaseDataset(Dataset):
         # extract mfcc features
         # 40 mel-space filters, 25ms hamming window, 10ms shift
         #feat = librosa.feature.mfcc(y=yt, sr=sr, n_mfcc=n_mfcc, hop_length=int(sr * 0.01), n_fft=int(sr * 0.025))
-        feat = np.random.randn((40, 200))
+        feat = np.random.randn(40, 200)
         logger.debug("feature obtained, shape (%d, %d)" % (feat.shape[0], feat.shape[1]))
 
         del y, yt
