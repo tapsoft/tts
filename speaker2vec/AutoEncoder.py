@@ -14,6 +14,9 @@ class AutoEncoder(nn.Module):
         self.dec1 = nn.Linear(in_features=40, out_features=2000)
         self.dec2 = nn.Linear(in_features=2000, out_features=d)
 
+        # non-linearity
+        self.relu = nn.ReLU()
+
         # initialize weights
         nn.init.xavier_normal_(self.enc1.weight)
         nn.init.xavier_normal_(self.enc2.weight)
