@@ -26,13 +26,13 @@ def get_feature(filepath, sr=16000):
     # return mfcc feature as a numpy array with shape (n_mfcc, t)
     # load audio file
     # trim silence
-    print("file: " + filepath)
+    print("\nfile: " + filepath)
 
     y, _ = librosa.load(filepath, mono=True, sr=sr)
-    logger.info('loaded')
+    logger.info('loaded, lenth %d' % y.shape[0])
 
     yt, idx = librosa.effects.trim(y, top_db=25)
-    logger.info('trimmed')
+    logger.info('trimmed, lenth %d' % yt.shape[0])
 
     # extract mfcc features
     # 40 mel-space filters, 25ms hamming window, 10ms shift
