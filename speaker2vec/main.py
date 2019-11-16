@@ -23,7 +23,7 @@ n_frames = 100
 
 # hyperparameters
 max_epochs = 2
-batch_size = 32
+batch_size = 64
 learning_rate = 1e-4
 valid_ratio = 0.01
 num_workers = 2
@@ -43,13 +43,13 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
 
     while True:
         batch += 1
-        logger.info('batch ' + str(batch))
+        logger.info('batch ', batch, ', queue length: ', len(queue))
 
         if queue.empty():
-            logger.debug('queue is empty')
+            logger.info('queue is empty')
 
         # input, target tensor shapes: (batch_size, n_mfcc, n_frames)
-        inputs, targets = queue.get()
+        inputs, targets = queue.get_nowait()
         batch_size = inputs.shape[0]
 
         # no data from queue
@@ -200,11 +200,10 @@ def main():
     # set device
     cuda = torch.cuda.is_available()
     device = torch.device('cuda' if cuda else 'cpu')
-    print(device)
 
     # initialize model
     model = AutoEncoder(d=n_mfcc*n_frames)
-    print(model)
+    print("model:", model)
 
     # load model to device
     model = nn.DataParallel(model).to(device)
@@ -226,9 +225,7 @@ def main():
 
     # split training and validation data
     train_batch_num, train_dataset_list, valid_dataset = split_dataset(batch_size=batch_size, valid_ratio=valid_ratio, num_workers=num_workers)
-    print(train_batch_num)
-    print(train_dataset_list)
-    print(valid_dataset)
+    logger.info('number of batches: ', train_batch_num)
 
     # begin logging
     logger.info('start')
@@ -238,7 +235,6 @@ def main():
         print("epoch", epoch)
 
         train_queue = queue.Queue(num_workers * 2)
-        print(train_queue)
         train_loader = MultiLoader(train_dataset_list, train_queue, batch_size, num_workers)
 
         train_loss = train(model, train_batch_num, train_queue, criterion, optimizer, device, train_begin, num_workers, print_batch=10)

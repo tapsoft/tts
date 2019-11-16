@@ -16,6 +16,9 @@ FORMAT = "[%(asctime)s %(filename)s:%(lineno)s - %(funcName)s()] %(message)s"
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format=FORMAT)
 logger.setLevel(logging.INFO)
 
+# input sliding window
+hop_frames = 50
+
 
 def get_feature(filepath, sr=16000):
     # return mfcc feature as a numpy array with shape (n_mfcc, t)
@@ -54,7 +57,6 @@ def _collate_fn(batch):
     # batch: a list of numpy arrays with shape (n_mfcc, t) with varying t
     # apply fixed-size sliding window and obtain input-target pairs
     # return tensor shape (batch_size, n_mfcc, n_frames)
-    hop_frames = 30
     inputs_list = []
     targets_list = []
 
@@ -96,6 +98,9 @@ def _collate_fn(batch):
 class BaseDataLoader(threading.Thread):
     # custom dataloader class
     def __init__(self, dataset, queue, batch_size, thread_id):
+
+        logger.info('BaseDataLoader init start')
+
         threading.Thread.__init__(self)
         self.collate_fn = _collate_fn
         self.dataset = dataset
@@ -104,6 +109,8 @@ class BaseDataLoader(threading.Thread):
         self.batch_size = batch_size
         self.dataset_count = len(dataset)
         self.thread_id = thread_id
+
+        logger.info('BaseDataLoader init complete')
 
     def count(self):
         # return number of batches
@@ -147,6 +154,9 @@ class BaseDataLoader(threading.Thread):
 
 class MultiLoader():
     def __init__(self, dataset_list, queue, batch_size, worker_size):
+
+        logger.info('MultiLoader init start')
+
         self.dataset_list = dataset_list
         self.queue = queue
         self.batch_size = batch_size
@@ -158,6 +168,8 @@ class MultiLoader():
                                               queue=self.queue,
                                               batch_size=self.batch_size,
                                               thread_id=i))
+
+        logger.info('MultiLoader init complete')
 
     def start(self):
         for i in range(self.worker_size):
