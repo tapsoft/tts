@@ -275,7 +275,7 @@ def main():
         train_loader = MultiLoader(train_dataset_list, train_queue, batch_size, num_workers)
         train_loader.start()
 
-        train_loss = train(model, train_batch_num, train_queue, criterion, optimizer, device, train_begin, num_workers, print_batch=5)
+        train_loss = train(model, train_batch_num, train_queue, criterion, optimizer, device, train_begin, num_workers, print_batch=10)
 
         logger.info("Epoch %d Training Loss %0.4f" % (epoch, train_loss))
         train_loader.join()
