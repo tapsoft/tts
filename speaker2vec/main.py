@@ -200,9 +200,11 @@ def main():
     # set device
     cuda = torch.cuda.is_available()
     device = torch.device('cuda' if cuda else 'cpu')
+    print(device)
 
     # initialize model
     model = AutoEncoder(d=n_mfcc*n_frames)
+    print(model)
 
     # load model to device
     model = nn.DataParallel(model).to(device)
@@ -215,6 +217,7 @@ def main():
     import_paths()
     for i in range(10):
         print(file_paths[i])
+    print("...")
     # randomly shuffle data
     random.shuffle(file_paths)
 
@@ -223,6 +226,9 @@ def main():
 
     # split training and validation data
     train_batch_num, train_dataset_list, valid_dataset = split_dataset(batch_size=batch_size, valid_ratio=valid_ratio, num_workers=num_workers)
+    print(train_batch_num)
+    print(train_dataset_list)
+    print(valid_dataset)
 
     # begin logging
     logger.info('start')
@@ -232,6 +238,7 @@ def main():
         print("epoch", epoch)
 
         train_queue = queue.Queue(num_workers * 2)
+        print(train_queue)
         train_loader = MultiLoader(train_dataset_list, train_queue, batch_size, num_workers)
 
         train_loss = train(model, train_batch_num, train_queue, criterion, optimizer, device, train_begin, num_workers, print_batch=10)

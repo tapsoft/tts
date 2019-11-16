@@ -117,7 +117,7 @@ class BaseDataLoader(threading.Thread):
 
     def run(self):
         # make batches
-        logger.debug('loader %d start' % self.thread_id)
+        logger.info('loader %d start' % self.thread_id)
 
         while True:
             # make a batch as a list of features
@@ -142,7 +142,7 @@ class BaseDataLoader(threading.Thread):
             batch = self.collate_fn(items)
             self.queue.put(batch)
 
-        logger.debug('loader %d stop' % self.thread_id)
+        logger.info('loader %d stop' % self.thread_id)
 
 
 class MultiLoader():
