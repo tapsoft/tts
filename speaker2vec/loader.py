@@ -97,7 +97,7 @@ def _collate_fn(batch):
 
     logger.debug('collation end, tensor shape (%d, %d, %d)' % (inputs.shape[0], inputs.shape[1], inputs.shape[2]))
 
-    del inputs_list, targets_list
+    #del inputs_list, targets_list
 
     return inputs, targets
 
