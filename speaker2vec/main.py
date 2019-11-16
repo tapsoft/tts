@@ -47,7 +47,7 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
 
         logger.debug('batch %d, queue length: %d' % (batch, queue.qsize()))
         if queue.empty():
-            logger.info('queue is empty')
+            logger.debug('queue is empty')
 
         # input, target tensor shapes: (batch_size, n_mfcc, n_frames)
         inputs, targets = queue.get()
