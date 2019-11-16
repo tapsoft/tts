@@ -93,8 +93,8 @@ def _collate_fn(batch):
         raise RuntimeError("no available data after preprocessing")
 
     # make batches
-    inputs = np.concatenate(inputs_list, axis=0)
-    targets = np.concatenate(targets_list, axis=0)
+    inputs = np.stack(inputs_list, axis=0)
+    targets = np.stack(targets_list, axis=0)
 
     inputs = torch.from_numpy(inputs).to(torch.float32)
     targets = torch.from_numpy(targets).to(torch.float32)
