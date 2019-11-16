@@ -185,7 +185,7 @@ def split_dataset(batch_size, valid_ratio, num_workers):
     # val_dataset: BaseDataset object of validation data
     valid_dataset = BaseDataset(file_paths[train_end_raw_id:], train_mode=False)
 
-    logger.info('trainloader contains %d elements' % len(train_dataset_list))
+    logger.info('train_dataset_list contains %d elements' % len(train_dataset_list))
 
     return train_batch_num, train_dataset_list, valid_dataset
 
@@ -233,6 +233,7 @@ def main():
 
         train_queue = queue.Queue(num_workers * 2)
         train_loader = MultiLoader(train_dataset_list, train_queue, batch_size, num_workers)
+
         train_loss = train(model, train_batch_num, train_queue, criterion, optimizer, device, train_begin, num_workers, print_batch=10)
 
         logger.info("Epoch %d Training Loss %0.4f" % (epoch, train_loss))
