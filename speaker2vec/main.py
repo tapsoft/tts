@@ -72,7 +72,6 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
 
         # output tensor shape: (batch_size, n_mfcc, n_frames)
         # forward pass
-        model.module.flatten_parameters()
         output = model(inputs).to(device)
 
         # compute loss
@@ -133,7 +132,6 @@ def evaluate(model, dataloader, queue, criterion, device):
 
             # output tensor shape: (batch_size, n_mfcc, n_frames)
             # forward pass
-            model.module.flatten_parameters()
             output = model(inputs).to(device)
 
             # compute loss
@@ -204,7 +202,6 @@ def main():
 
     # initialize model
     model = AutoEncoder(d=n_mfcc*n_frames)
-    model.flatten_parameters()
 
     # load model to device
     model = nn.DataParallel(model).to(device)
