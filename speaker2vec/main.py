@@ -27,7 +27,7 @@ max_epochs = 10
 batch_size = 32
 learning_rate = 1e-4
 valid_ratio = 0.01
-num_workers = 1
+num_workers = 4
 
 
 def train(model, total_batch_size, queue, criterion, optimizer, device, train_begin, train_loader_count, print_batch=5):
