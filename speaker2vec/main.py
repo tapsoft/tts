@@ -220,10 +220,12 @@ def split_dataset(batch_size, valid_ratio, num_workers):
 
 def main():
     # set random seed
+    """
     seed = 1
     random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
+    """
 
     # set device
     cuda = torch.cuda.is_available()
@@ -273,19 +275,16 @@ def main():
 
         train_queue = queue.Queue(num_workers * 2)
         train_loader = MultiLoader(train_dataset_list, train_queue, batch_size, num_workers)
-        train_loader.daemon = True
+
         train_loader.start()
-
         train_loss = train(model, train_batch_num, train_queue, criterion, optimizer, device, train_begin, num_workers, print_batch=10)
-
         logger.info("Epoch %d Training Loss %0.4f" % (epoch, train_loss))
         train_loader.join()
 
         valid_queue = queue.Queue(num_workers * 2)
         valid_loader = BaseDataLoader(valid_dataset, valid_queue, batch_size, 0)
-        valid_loader.daemon = True
-        valid_loader.start()
 
+        valid_loader.start()
         logger.info("start eval")
         eval_loss = evaluate(model, valid_loader, valid_queue, criterion, device)
         valid_loader.join()
