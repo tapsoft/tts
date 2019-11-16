@@ -9,7 +9,6 @@ import logging
 from torch.utils.data import Dataset
 import numpy as np
 import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
 import scipy.io.wavfile as wav
 from trim import trim
 from python_speech_features import mfcc
