@@ -50,7 +50,7 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
             logger.debug('queue is empty')
 
         # input, target tensor shapes: (batch_size, n_mfcc, n_frames)
-        inputs, targets = queue.get()
+        inputs, targets = queue.get(timeout=10)
         batch_size = inputs.shape[0]
 
         logger.debug('got a tensor from loader queue, shape (%d, %d, %d)'
