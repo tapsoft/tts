@@ -11,6 +11,7 @@ from torch.utils.data import Dataset, DataLoader
 import numpy as np
 import librosa
 
+
 logger = logging.getLogger('root')
 FORMAT = "[%(asctime)s %(filename)s:%(lineno)s - %(funcName)s()] %(message)s"
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format=FORMAT)
@@ -26,7 +27,7 @@ def get_feature(filepath, sr=16000, train_mode=False):
 
     # extract mfcc features
     # 40 mel-space filters, 25ms hamming window, 10ms shift
-    feat = librosa.feature.mfcc(y=yt, sr=sr, n_mfcc=40, hop_length=int(sr/100), n_fft=int(sr/40))
+    feat = librosa.feature.mfcc(y=yt, sr=sr, n_mfcc=n_mfcc, hop_length=int(sr*0.01), n_fft=int(sr*0.025))
     del y, yt
     return feat
 
@@ -52,7 +53,6 @@ def _collate_fn(batch):
     # batch: a list of numpy arrays with shape (n_mfcc, t) with varying t
     # apply fixed-size sliding window and obtain input-target pairs
     # return tensor shape (batch_size, n_mfcc, n_frames)
-    n_frames = 100
     hop_frames = 30
     inputs_list = []
     targets_list = []
@@ -79,9 +79,8 @@ def _collate_fn(batch):
             targets_list.append(target_feat)
 
     if not inputs_list:
-        # make empty batches
-        inputs = torch.zeros(0, 0, 0).to(torch.float32)
-        targets = torch.zeros(0, 0, 0).to(torch.float32)
+        # no available data after preprocessing
+        raise RuntimeError("no available data after preprocessing")
 
         return inputs, targets
 

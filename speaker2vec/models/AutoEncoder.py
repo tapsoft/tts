@@ -22,19 +22,21 @@ class AutoEncoder(nn.Module):
         nn.init.xavier_normal_(self.dec2.weight)
 
     def forward(self, x):
-        # input tensor shape: (batch_size, n_mfcc, n_frames)
-        # output tensor shape: (batch_size, n_mfcc, n_frames)
+        # input, output tensor shapes: (batch_size, n_mfcc, n_frames)
         batch_size = x.shape[0]
         n_mfcc = x.shape[1]
         n_frames = x.shape[2]
 
+        # 2d -> 1d
         x = torch.reshape(x, (batch_size, -1))
 
+        # forward
         x = self.relu(self.enc1(x))
         x = self.relu(self.enc2(x))
         x = self.relu(self.dec1(x))
         o = self.dec2(x)
 
+        # 1d -> 2d
         o = torch.reshape(o, (batch_size, n_mfcc, n_frames))
 
         return o

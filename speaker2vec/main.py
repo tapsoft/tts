@@ -16,14 +16,24 @@ import matplotlib.pyplot as plt
 from loader import *
 from models import AutoEncoder
 
-FILE_PATHS = "D:/GitHub_Repos/zeroshot-tts-korean/file_paths.txt"
-# FILE_PATHS = "~/zeroshot-tts-korean/file_paths.txt"
+# training data location
+# FILE_PATHS = "D:/GitHub_Repos/zeroshot-tts-korean/file_paths.txt"
+FILE_PATHS = "~/zeroshot-tts-korean/file_paths.txt"
 file_paths = []
 
+# preprocessing
+n_mfcc = 40
+n_frames = 100
 
-def train(model, total_batch_size, queue, criterion, optimizer, device, train_begin, train_loader_count):
-    print_batch = 5
+# hyperparameters
+max_epochs = 2
+batch_size = 32
+learning_rate = 1e-4
+valid_ratio = 0.01
+num_workers = 2
 
+
+def train(model, total_batch_size, queue, criterion, optimizer, device, train_begin, train_loader_count, print_batch=5):
     total_loss = 0.
     total_num = 0
     batch = 0
@@ -31,10 +41,13 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
     # set model to train mode
     model.train()
 
+    # begin logging
     logger.info('train() start')
     begin = epoch_begin = time.time()
 
     while True:
+        batch += 1
+
         if queue.empty():
             logger.debug('queue is empty')
 
@@ -42,12 +55,13 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
         inputs, targets = queue.get()
         batch_size = inputs.shape[0]
 
+        # no data from queue
         if inputs.shape[0] == 0:
-            # empty feats means closing one loader
+            # close one loader
             train_loader_count -= 1
             logger.debug('left train_loader: %d' % (train_loader_count))
 
-            # if all loader closed, stop training
+            # if every loader closed, stop training
             if train_loader_count == 0:
                 break
             else:
@@ -56,45 +70,88 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
         # flush gradients
         optimizer.zero_grad()
 
+        # load tensors to device
         inputs = inputs.to(device)
         targets = targets.to(device)
 
         # output tensor shape: (batch_size, n_mfcc, n_frames)
-        # compute output
+        # forward pass
         model.module.flatten_parameters()
         output = model(inputs).to(device)
 
+        # compute loss
         loss = criterion(output.contiguous().view(-1), targets.contiguous().view(-1))
         total_loss += loss.item()
         total_num += batch_size
 
+        # backward pass
         loss.backward()
         optimizer.step()
 
+        # log progress
         if batch % print_batch == 0:
+            # compute elapsed time
             current = time.time()
             elapsed = current - begin
             epoch_elapsed = (current - epoch_begin) / 60.0
             train_elapsed = (current - train_begin) / 3600.0
 
+            # log
             logger.info('batch: {:4d}/{:4d}, batch size: {:3d} loss: {:.4f}, elapsed: {:.2f}s {:.2f}m {:.2f}h'
                         .format(batch,
                                 total_batch_size,
                                 batch_size,
                                 total_loss / total_num,
                                 elapsed, epoch_elapsed, train_elapsed))
+
+            # reset time
             begin = time.time()
 
-        batch += 1
-        train.cumulative_batch_count += 1
-
+    # finish logging
     logger.info('train() completed')
+
     return total_loss / total_num
 
 
-def evaluate():
-    print("eval step. passing")
-    return 0
+def evaluate(model, dataloader, queue, criterion, device):
+    logger.info('evaluate() start')
+    total_loss = 0.
+    total_num = 0
+
+    # set model to eval mode
+    model.eval()
+
+    with torch.no_grad():
+        while True:
+            # input, target tensor shapes: (batch_size, n_mfcc, n_frames)
+            inputs, targets = queue.get()
+            batch_size = inputs.shape[0]
+
+            # if no data from queue, end evaluation
+            if batch_size == 0:
+                break
+
+            # flush gradients
+            optimizer.zero_grad()
+
+            # load tensors to device
+            inputs = inputs.to(device)
+            targets = targets.to(device)
+
+            # output tensor shape: (batch_size, n_mfcc, n_frames)
+            # forward pass
+            model.module.flatten_parameters()
+            output = model(inputs).to(device)
+
+            # compute loss
+            loss = criterion(output.contiguous().view(-1), targets.contiguous().view(-1))
+            total_loss += loss.item()
+            total_num += batch_size
+
+    # finish logging
+    logger.info('evaluate() completed')
+
+    return total_loss / total_num
 
 
 def import_paths():
@@ -106,16 +163,14 @@ def import_paths():
     f.close()
 
 
-def split_dataset(batch_size=32, valid_ratio=0.01, num_workers=2):
+def split_dataset(batch_size, valid_ratio, num_workers):
     # split train/val dataset
     # construct BaseDataset objects using file_paths
-    # train_batch_num: number of batches in training data
-    # train_dataset_list: list of BaseDataset objects of training data
-    # val_dataset: BaseDataset object of validation data
     train_loader_count = num_workers
     file_num = len(file_paths)
     batch_num = math.ceil(file_num / batch_size)
 
+    # train_batch_num: number of batches in training data
     valid_batch_num = math.ceil(batch_num * valid_ratio)
     train_batch_num = batch_num - valid_batch_num
 
@@ -125,6 +180,7 @@ def split_dataset(batch_size=32, valid_ratio=0.01, num_workers=2):
     train_end_raw_id = 0
     train_dataset_list = list()
 
+    # train_dataset_list: list of BaseDataset objects of training data
     for i in range(num_workers):
         train_end = min(train_begin + batch_num_per_train_loader, train_batch_num)
 
@@ -136,30 +192,25 @@ def split_dataset(batch_size=32, valid_ratio=0.01, num_workers=2):
 
         train_begin = train_end
 
+    # val_dataset: BaseDataset object of validation data
     valid_dataset = BaseDataset(file_paths[train_end_raw_id:], train_mode=False)
 
     return train_batch_num, train_dataset_list, valid_dataset
 
 
 def main():
-    feature_size = 4000
-    learning_rate = 1e-4
-    num_workers = 2
-    batch_size = 32
-    max_epochs = 2
-
     # set random seed
     seed = 1
     random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
-    # set device to gpu if available
+    # set device
     cuda = torch.cuda.is_available()
     device = torch.device('cuda' if cuda else 'cpu')
 
     # initialize model
-    model = AutoEncoder(d=feature_size)
+    model = AutoEncoder(d=n_mfcc*n_frames)
     model.flatten_parameters()
 
     # load model to device
@@ -180,7 +231,7 @@ def main():
     begin_epoch = 0
 
     # split training and validation data
-    train_batch_num, train_dataset_list, valid_dataset = split_dataset(batch_size=batch_size, valid_ratio=0.01, num_workers=num_workers)
+    train_batch_num, train_dataset_list, valid_dataset = split_dataset(batch_size=batch_size, valid_ratio=valid_ratio, num_workers=num_workers)
 
     # begin logging
     logger.info('start')
@@ -191,7 +242,7 @@ def main():
 
         train_queue = queue.Queue(num_workers * 2)
         train_loader = MultiLoader(train_dataset_list, train_queue, batch_size, num_workers)
-        train_loss = train(model, train_batch_num, train_queue, criterion, optimizer, device, train_begin, num_workers, 10)
+        train_loss = train(model, train_batch_num, train_queue, criterion, optimizer, device, train_begin, num_workers, print_batch=10)
 
         logger.info("Epoch %d Training Loss %0.4f" % (epoch, train_loss))
         train_loader.join()
@@ -201,7 +252,7 @@ def main():
         valid_loader.start()
 
         print("start eval")
-        eval_loss = evaluate(model, valid_loader, valid_queue, criterion,device)
+        eval_loss = evaluate(model, valid_loader, valid_queue, criterion, device)
         valid_loader.join()
         print("end eval")
 
