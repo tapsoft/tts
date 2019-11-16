@@ -8,6 +8,8 @@ import threading
 import logging
 from torch.utils.data import Dataset
 import numpy as np
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 import librosa
 from main import n_mfcc, n_frames
 
@@ -147,9 +149,10 @@ class BaseDataLoader(threading.Thread):
 
             # construct batch tensors (inputs, targets)
             batch = self.collate_fn(items)
-            self.queue.put(batch)
+            self.queue.put_nowait(batch)
 
-        logger.info('loader %d stop' % self.thread_id)
+        logger.info('loader %d stop, batch tensor size (%d, %d, %d)'
+                    % (self.thread_id, batch[0].shape[0], batch[0].shape[1], batch[0].shape[2]))
 
 
 class MultiLoader():

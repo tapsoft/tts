@@ -43,8 +43,8 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
 
     while True:
         batch += 1
-        logger.info('batch %d, queue length: %d' % (batch, queue.qsize()))
 
+        logger.info('batch %d, queue length: %d' % (batch, queue.qsize()))
         if queue.empty():
             logger.info('queue is empty')
 
@@ -225,7 +225,7 @@ def main():
 
     # split training and validation data
     train_batch_num, train_dataset_list, valid_dataset = split_dataset(batch_size=batch_size, valid_ratio=valid_ratio, num_workers=num_workers)
-    logger.info('number of batches: ', train_batch_num)
+    logger.info('number of batches: %d' % train_batch_num)
 
     # begin logging
     logger.info('start')
