@@ -10,14 +10,15 @@ from torch.utils.data import Dataset
 import numpy as np
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
-import joblib
-import librosa
+import scipy.io.wavfile as wav
+from trim import trim
+from python_speech_features import mfcc
 from main import n_mfcc, n_frames
 
 logger = logging.getLogger('root')
 FORMAT = "[%(asctime)s %(filename)s:%(lineno)s - %(funcName)s()] %(message)s"
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format=FORMAT)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 # input sliding window
 hop_frames = 100
@@ -35,23 +36,24 @@ class BaseDataset(Dataset):
     def __getitem__(self, idx, sr=16000):
         # return mfcc feature as a numpy array with shape (n_mfcc, t)
         filepath = self.file_paths[idx]
+        logger.debug("file: " + filepath[-22:])
 
         # load audio file
-        logger.debug("file: " + filepath[-22:])
-        y, _ = librosa.load(filepath, mono=True, sr=sr)
-        logger.debug('loaded, length %d' % y.shape[0])
+        (rate, sig) = wav.read(filepath)
+        sig = sig.ravel()
+        logger.debug('loaded, length %d' % sig.shape[0])
 
         # trim silence
-        yt, idx = librosa.effects.trim(y, top_db=25)
-        logger.debug('trimmed, length %d' % yt.shape[0])
+        sigt = trim(sig)
+        logger.debug('trimmed, length %d' % sigt.shape[0])
 
         # extract mfcc features
         # 40 mel-space filters, 25ms hamming window, 10ms shift
-        #feat = librosa.feature.mfcc(y=yt, sr=sr, n_mfcc=n_mfcc, hop_length=int(sr * 0.01), n_fft=int(sr * 0.025))
-        feat = np.random.randn(40, 400)
+        feat = mfcc(signal=sigt, samplerate=rate, winlen=0.025, winstep=0.01, numcep=40, nfilt=40).T
+        # feat = np.random.randn(40, 400)
         logger.debug("feature obtained, shape (%d, %d)" % (feat.shape[0], feat.shape[1]))
 
-        del y, yt
+        del sig, sigt
 
         return feat
 

@@ -1,21 +1,34 @@
-import librosa
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.io.wavfile as wav
+from trim import trim
+from python_speech_features import mfcc
 
 
-def get_feature(filepath, sr=16000, train_mode=False):
-    # load audio file
+def get_feature(filepath):
     # return mfcc feature as a numpy array with shape (n_mfcc, t)
-    y, _ = librosa.load(filepath, mono=True, sr=sr)
-    yt, idx = librosa.effects.trim(y, top_db=25)
+    print("file: " + filepath[-22:])
+
+    # load audio file
+    (rate, sig) = wav.read(filepath)
+    sig = sig.ravel()
+    print('loaded, length %d' % sig.shape[0])
+
+    # trim silence
+    sigt = trim(sig)
+    print('trimmed, length %d' % sigt.shape[0])
+
     # extract mfcc features
     # 40 mel-space filters, 25ms hamming window, 10ms shift
-    feat = librosa.feature.mfcc(y=yt, sr=sr, n_mfcc=40, hop_length=int(sr/100), n_fft=int(sr/40))
+    feat = mfcc(signal=sigt, samplerate=rate, winlen=0.025, winstep=0.01, numcep=40, nfilt=40).T
+    # feat = np.random.randn(40, 400)
+    print("feature obtained, shape (%d, %d)" % (feat.shape[0], feat.shape[1]))
+
 
     plt.subplot(4, 1, 1)
-    plt.plot(y)
+    plt.plot(sig)
     plt.subplot(4, 1, 2)
-    plt.plot(yt)
+    plt.plot(sigt)
     plt.subplot(4, 1, 3)
     plt.imshow(feat, cmap='jet')
     plt.gca().invert_yaxis()
@@ -27,7 +40,7 @@ def get_feature(filepath, sr=16000, train_mode=False):
     plt.show()
     print(feat[:, 0:200].shape)
 
-    del y, yt
+    del sig, sigt
     return feat
 
 
