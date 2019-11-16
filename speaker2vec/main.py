@@ -231,7 +231,7 @@ def main():
 
     # initialize model
     model = AutoEncoder(d=n_mfcc*n_frames)
-    logger.info("model:", model)
+    logger.info("model: " + str(model))
 
     # load model to device
     model = nn.DataParallel(model).to(device)
@@ -269,7 +269,7 @@ def main():
 
     train_begin = time.time()
     for epoch in range(begin_epoch, max_epochs):
-        logger.info("epoch", epoch+1)
+        logger.info("epoch: %d" % (epoch+1))
 
         train_queue = queue.Queue(num_workers * 2)
         train_loader = MultiLoader(train_dataset_list, train_queue, batch_size, num_workers)
