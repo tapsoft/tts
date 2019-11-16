@@ -185,6 +185,8 @@ def split_dataset(batch_size, valid_ratio, num_workers):
     # val_dataset: BaseDataset object of validation data
     valid_dataset = BaseDataset(file_paths[train_end_raw_id:], train_mode=False)
 
+    logger.debug('trainloader contains %d elements' % len(train_dataset_list))
+
     return train_batch_num, train_dataset_list, valid_dataset
 
 
