@@ -30,7 +30,8 @@ num_workers = 1
 
 
 def train(model, total_batch_size, queue, criterion, optimizer, device, train_begin, train_loader_count, print_batch=5):
-    total_loss = 0.
+    print_loss = 0.
+    total_loss = 0
     total_num = 0
     batch = 0
 
@@ -80,8 +81,9 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
 
         # compute loss
         loss = criterion(output.contiguous().view(-1), targets.contiguous().view(-1))
+        print_loss += loss.item()
         total_loss += loss.item()
-        total_num += batch_size
+        total_num += 1
 
         # backward pass
         loss.backward()
@@ -97,12 +99,13 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
 
             # log
             log_str = 'batch: {:4d}/{:4d}, batch size: {:3d} loss: {:.4f}, elapsed: {:.2f}s {:.2f}m {:.2f}h'. \
-                format(batch, total_batch_size, batch_size, total_loss / total_num, elapsed, epoch_elapsed,
+                format(batch, total_batch_size, batch_size, total_loss / print_batch, elapsed, epoch_elapsed,
                        train_elapsed)
             logger.info(log_str)
 
-            # reset time
+            # reset
             begin = time.time()
+            print_loss = 0
 
     # finish logging
     logger.info('train() completed')
@@ -213,7 +216,7 @@ def main():
 
     # set optimizer and loss
     optimizer = optim.Adam(model.module.parameters(), lr=learning_rate)
-    criterion = nn.MSELoss(reduction='sum').to(device)
+    criterion = nn.MSELoss(reduction='mean').to(device)
 
     # import data file paths
     import_paths()
