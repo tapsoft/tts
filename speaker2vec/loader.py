@@ -47,7 +47,7 @@ class BaseDataset(Dataset):
 
         # extract mfcc features
         # 40 mel-space filters, 25ms hamming window, 10ms shift
-        feat = mfcc(signal=sigt, samplerate=rate, winlen=0.025, winstep=0.01, numcep=40, nfilt=40).T
+        feat = mfcc(signal=sigt, samplerate=rate, winlen=0.025, winstep=0.01, numcep=n_mfcc, nfilt=n_mfcc).T
         # feat = np.random.randn(40, 400)
         logger.debug("feature obtained, shape (%d, %d)" % (feat.shape[0], feat.shape[1]))
 
