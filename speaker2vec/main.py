@@ -43,7 +43,7 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
 
     while True:
         batch += 1
-        logger.info('batch ', batch, ', queue length: ', len(queue))
+        logger.info('batch ', batch, ', queue length: ', queue.qsize())
 
         if queue.empty():
             logger.info('queue is empty')
