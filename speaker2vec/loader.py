@@ -133,7 +133,7 @@ class BaseDataLoader(threading.Thread):
             for i in range(self.batch_size):
                 if self.index >= self.dataset_count:
                     break
-                items.append(self.dataset.getitem(self.index))
+                items.append(self.dataset[self.index])
                 self.index += 1
 
             # if no features, make empty batches (inputs, targets)
