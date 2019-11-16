@@ -3,10 +3,10 @@
 unsupervised model  
 **Goal:** generate speaker embedding without knowing speaker labels
 
-![objective](./img_objective.png =250x)
+<img src="./img_objective.png" width="200"/>
 
 **Autoencoder architecture**  
-![model](./img_model.png =250x)
+<img src="./img_model.png" width="200"/>
 input -> K hidden layers -> embedding layer -> K hidden layers -> output  
 **basic:** 4000 -> 2000 -> 40 -> 2000 -> 4000  
 **modified:** 4000 -> 6000 -> 2000 -> 256 -> 2000 -> 6000 -> 4000
