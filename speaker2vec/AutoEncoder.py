@@ -9,10 +9,12 @@ class AutoEncoder(nn.Module):
             raise ValueError("input feature size not specified")
 
         # fully connected layers
-        self.enc1 = nn.Linear(in_features=d, out_features=2000)
-        self.enc2 = nn.Linear(in_features=2000, out_features=40)
-        self.dec1 = nn.Linear(in_features=40, out_features=2000)
-        self.dec2 = nn.Linear(in_features=2000, out_features=d)
+        self.enc1 = nn.Linear(in_features=d, out_features=6000)
+        self.enc2 = nn.Linear(in_features=6000, out_features=2000)
+        self.enc3 = nn.Linear(in_features=2000, out_features=256)
+        self.dec1 = nn.Linear(in_features=256, out_features=2000)
+        self.dec2 = nn.Linear(in_features=2000, out_features=6000)
+        self.dec3 = nn.Linear(in_features=6000, out_features=d)
 
         # non-linearity
         self.relu = nn.ReLU()
@@ -20,8 +22,10 @@ class AutoEncoder(nn.Module):
         # initialize weights
         nn.init.xavier_normal_(self.enc1.weight)
         nn.init.xavier_normal_(self.enc2.weight)
+        nn.init.xavier_normal_(self.enc3.weight)
         nn.init.xavier_normal_(self.dec1.weight)
         nn.init.xavier_normal_(self.dec2.weight)
+        nn.init.xavier_normal_(self.dec3.weight)
 
     def forward(self, x):
         # input, output tensor shapes: (batch_size, n_mfcc, n_frames)
@@ -35,8 +39,10 @@ class AutoEncoder(nn.Module):
         # forward
         x = self.relu(self.enc1(x))
         x = self.relu(self.enc2(x))
+        x = self.relu(self.enc3(x))
         x = self.relu(self.dec1(x))
-        o = self.dec2(x)
+        x = self.relu(self.dec2(x))
+        o = self.dec3(x)
 
         # 1d -> 2d
         o = torch.reshape(o, (batch_size, n_mfcc, n_frames))
