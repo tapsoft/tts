@@ -6,7 +6,7 @@ unsupervised model
 <img src="./img_objective.png" width="400"/>
 
 **Autoencoder architecture**  
-<img src="./img_model.png" width="400"/>
+<img src="./img_model.png" width="400"/>  
 input -> K hidden layers -> embedding layer -> K hidden layers -> output  
 **basic:** 4000 -> 2000 -> 40 -> 2000 -> 4000  
 **modified:** 4000 -> 6000 -> 2000 -> 256 -> 2000 -> 6000 -> 4000
