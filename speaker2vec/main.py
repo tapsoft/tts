@@ -1,20 +1,16 @@
-
 import os
 import sys
 import math
 import time
-import argparse
 import queue
 import random
-import logging
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torch.nn.functional as F
 import numpy as np
 import matplotlib.pyplot as plt
 from loader import *
-from models import AutoEncoder
+from AutoEncoder import AutoEncoder
 
 # training data location
 # FILE_PATHS = "D:/GitHub_Repos/zeroshot-tts-korean/file_paths.txt"
@@ -130,9 +126,6 @@ def evaluate(model, dataloader, queue, criterion, device):
             # if no data from queue, end evaluation
             if batch_size == 0:
                 break
-
-            # flush gradients
-            optimizer.zero_grad()
 
             # load tensors to device
             inputs = inputs.to(device)

@@ -1,4 +1,3 @@
-
 import os
 import sys
 import math
@@ -7,10 +6,10 @@ import torch
 import random
 import threading
 import logging
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 import numpy as np
 import librosa
-
+from main import n_mfcc, n_frames
 
 logger = logging.getLogger('root')
 FORMAT = "[%(asctime)s %(filename)s:%(lineno)s - %(funcName)s()] %(message)s"
@@ -18,7 +17,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format=FORMAT)
 logger.setLevel(logging.INFO)
 
 
-def get_feature(filepath, sr=16000, train_mode=False):
+def get_feature(filepath, sr=16000):
     # return mfcc feature as a numpy array with shape (n_mfcc, t)
     # load audio file
     # trim silence
@@ -44,7 +43,7 @@ class BaseDataset(Dataset):
 
     def __getitem__(self, idx):
         # return loaded numpy array with shape shape (n_mfcc, t)
-        feat = get_feature(self.file_paths[idx], train_mode=self.train_mode)
+        feat = get_feature(self.file_paths[idx])
         return feat
 
 
@@ -81,8 +80,6 @@ def _collate_fn(batch):
     if not inputs_list:
         # no available data after preprocessing
         raise RuntimeError("no available data after preprocessing")
-
-        return inputs, targets
 
     # make batches
     inputs = np.concatenate(inputs_list, axis=0)
