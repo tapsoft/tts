@@ -14,7 +14,7 @@ from AutoEncoder import AutoEncoder
 
 # training data location
 # FILE_PATHS = "D:/GitHub_Repos/zeroshot-tts-korean/file_paths.txt"
-FILE_PATHS = "~/zeroshot-tts-korean/file_paths.txt"
+FILE_PATHS = "/home/cs470/zeroshot-tts-korean/file_paths.txt"
 file_paths = []
 
 # preprocessing
