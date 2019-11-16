@@ -189,6 +189,7 @@ class MultiLoader():
 
     def start(self):
         for i in range(self.worker_size):
+            self.loader[i].daemon = True
             self.loader[i].start()
 
     def join(self):
