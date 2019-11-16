@@ -47,7 +47,6 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
 
         if queue.empty():
             logger.debug('queue is empty')
-            continue
 
         # input, target tensor shapes: (batch_size, n_mfcc, n_frames)
         inputs, targets = queue.get()
@@ -273,7 +272,7 @@ def main():
     for epoch in range(begin_epoch, max_epochs):
         logger.info("epoch: %d" % (epoch+1))
 
-        train_queue = queue.Queue(num_workers * 2)
+        train_queue = queue.Queue()  # num_workers * 2
         train_loader = MultiLoader(train_dataset_list, train_queue, batch_size, num_workers)
 
         train_loader.start()
@@ -281,7 +280,7 @@ def main():
         logger.info("Epoch %d Training Loss %0.4f" % (epoch, train_loss))
         train_loader.join()
 
-        valid_queue = queue.Queue(num_workers * 2)
+        valid_queue = queue.Queue()  # num_workers * 2
         valid_loader = BaseDataLoader(valid_dataset, valid_queue, batch_size, 0)
 
         valid_loader.start()
