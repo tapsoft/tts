@@ -52,7 +52,7 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
         inputs, targets = queue.get()
         batch_size = inputs.shape[0]
 
-        logger.info('obtained a tensor from loader queue, shape (%d, %d, %d)'
+        logger.info('got a tensor from loader queue, shape (%d, %d, %d)'
                     % (inputs.shape[0], inputs.shape[1], inputs.shape[2]))
 
         # no data from queue

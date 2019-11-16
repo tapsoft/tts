@@ -68,7 +68,7 @@ def _collate_fn(batch):
     targets_list = []
 
     for feat in batch:
-        fs = feat.shape[1]
+        fs = feat.shape[2]
 
         # only use data with sufficient length
         if fs < 2*n_frames:
@@ -99,7 +99,7 @@ def _collate_fn(batch):
     inputs = torch.from_numpy(inputs).to(torch.float32)
     targets = torch.from_numpy(targets).to(torch.float32)
 
-    logger.info('collation end, %d segment pairs generated' % len(inputs_list))
+    logger.info('collation end, tensor shape (%d, %d, %d)' % (inputs.shape[0], inputs.shape[1], inputs.shape[2]))
 
     del inputs_list, targets_list
 
@@ -159,10 +159,11 @@ class BaseDataLoader(threading.Thread):
 
             # construct batch tensors (inputs, targets)
             batch = self.collate_fn(items)
+            logger.info('loader %d: batch tensor size (%d, %d, %d) queued'
+                        % (self.thread_id, batch[0].shape[0], batch[0].shape[1], batch[0].shape[2]))
             self.queue.put(batch)
 
-        logger.info('loader %d stop, batch tensor size (%d, %d, %d)'
-                    % (self.thread_id, batch[0].shape[0], batch[0].shape[1], batch[0].shape[2]))
+        logger.info('loader %d stop')
 
 
 class MultiLoader():
