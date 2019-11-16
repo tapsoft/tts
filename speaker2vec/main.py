@@ -23,10 +23,10 @@ n_frames = 100
 
 # hyperparameters
 max_epochs = 2
-batch_size = 64
-learning_rate = 1e-4
+batch_size = 8
+learning_rate = 1e-5
 valid_ratio = 0.01
-num_workers = 1
+num_workers = 2
 
 
 def train(model, total_batch_size, queue, criterion, optimizer, device, train_begin, train_loader_count, print_batch=5):
@@ -51,6 +51,8 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
         # input, target tensor shapes: (batch_size, n_mfcc, n_frames)
         inputs, targets = queue.get()
         batch_size = inputs.shape[0]
+
+        logger.info('obtained a tensor from loader queue, batch size %d' % batch_size)
 
         # no data from queue
         if inputs.shape[0] == 0:
