@@ -149,7 +149,7 @@ class BaseDataLoader(threading.Thread):
             # if no features, make empty batches (inputs, targets)
             if len(items) == 0:
                 batch = self.create_empty_batch()
-                self.queue.put_nowait(batch)
+                self.queue.put(batch)
                 break
 
             # shuffle features in a batch
@@ -159,7 +159,7 @@ class BaseDataLoader(threading.Thread):
             batch = self.collate_fn(items)
             logger.debug('loader %d: batch tensor size (%d, %d, %d) queued'
                         % (self.thread_id, batch[0].shape[0], batch[0].shape[1], batch[0].shape[2]))
-            self.queue.put_nowait(batch)
+            self.queue.put(batch)
 
         logger.debug('loader %d stop')
 

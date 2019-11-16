@@ -45,16 +45,16 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
     while True:
         batch += 1
 
-        logger.debug('batch %d, queue length: %d' % (batch, queue.qsize()))
-        if queue.empty():
+        try:
+            # input, target tensor shapes: (batch_size, n_mfcc, n_frames)
+            inputs, targets = queue.get()
+            batch_size = inputs.shape[0]
+        except queue.Empty:
             logger.debug('queue is empty')
-
-        # input, target tensor shapes: (batch_size, n_mfcc, n_frames)
-        inputs, targets = queue.get(timeout=10)
-        batch_size = inputs.shape[0]
-
-        logger.debug('got a tensor from loader queue, shape (%d, %d, %d)'
-                    % (inputs.shape[0], inputs.shape[1], inputs.shape[2]))
+            continue
+        else:
+            logger.debug('batch %d, queue length: %d, got a tensor of shape (%d, %d, %d)'
+                         % (batch, queue.qsize(), inputs.shape[0], inputs.shape[1], inputs.shape[2]))
 
         # no data from queue
         if inputs.shape[0] == 0:
