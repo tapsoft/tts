@@ -25,18 +25,18 @@ hop_frames = 100
 def get_feature(filepath, sr=16000):
     # return mfcc feature as a numpy array with shape (n_mfcc, t)
     # load audio file
-    logger.info("file: " + filepath[-22:])
+    logger.debug("file: " + filepath[-22:])
     y, _ = librosa.load(filepath, mono=True, sr=sr)
-    logger.info('loaded, lenth %d' % y.shape[0])
+    logger.debug('loaded, lenth %d' % y.shape[0])
 
     # trim silence
     yt, idx = librosa.effects.trim(y, top_db=25)
-    logger.info('trimmed, lenth %d' % yt.shape[0])
+    logger.debug('trimmed, lenth %d' % yt.shape[0])
 
     # extract mfcc features
     # 40 mel-space filters, 25ms hamming window, 10ms shift
     feat = librosa.feature.mfcc(y=yt, sr=sr, n_mfcc=n_mfcc, hop_length=int(sr*0.01), n_fft=int(sr*0.025))
-    logger.info("feature obtained, shape (%d, %d)" % (feat.shape[0], feat.shape[1]))
+    logger.debug("feature obtained, shape (%d, %d)" % (feat.shape[0], feat.shape[1]))
 
     del y, yt
     return feat
@@ -63,7 +63,7 @@ def _collate_fn(batch):
     # batch: a list of numpy arrays with shape (n_mfcc, t) with varying t
     # apply fixed-size sliding window and obtain input-target pairs
     # return tensor shape (batch_size, n_mfcc, n_frames)
-    logger.info('collation start, batch size %d' % len(batch))
+    logger.debug('collation start, batch size %d' % len(batch))
     inputs_list = []
     targets_list = []
 
@@ -99,7 +99,7 @@ def _collate_fn(batch):
     inputs = torch.from_numpy(inputs).to(torch.float32)
     targets = torch.from_numpy(targets).to(torch.float32)
 
-    logger.info('collation end, tensor shape (%d, %d, %d)' % (inputs.shape[0], inputs.shape[1], inputs.shape[2]))
+    logger.debug('collation end, tensor shape (%d, %d, %d)' % (inputs.shape[0], inputs.shape[1], inputs.shape[2]))
 
     del inputs_list, targets_list
 
@@ -110,7 +110,7 @@ class BaseDataLoader(threading.Thread):
     # custom dataloader class
     def __init__(self, dataset, queue, batch_size, thread_id):
 
-        logger.info('BaseDataLoader init start')
+        logger.debug('BaseDataLoader init start')
 
         threading.Thread.__init__(self)
         self.collate_fn = _collate_fn
@@ -121,7 +121,7 @@ class BaseDataLoader(threading.Thread):
         self.dataset_count = len(dataset)
         self.thread_id = thread_id
 
-        logger.info('BaseDataLoader init complete')
+        logger.debug('BaseDataLoader init complete')
 
     def count(self):
         # return number of batches
@@ -135,7 +135,7 @@ class BaseDataLoader(threading.Thread):
 
     def run(self):
         # make batches
-        logger.info('loader %d start, batch size %d, number of batches %d'
+        logger.debug('loader %d start, batch size %d, number of batches %d'
                     % (self.thread_id, self.batch_size, math.ceil(self.dataset_count / self.batch_size)))
 
         while True:
@@ -161,17 +161,17 @@ class BaseDataLoader(threading.Thread):
 
             # construct batch tensors (inputs, targets)
             batch = self.collate_fn(items)
-            logger.info('loader %d: batch tensor size (%d, %d, %d) queued'
+            logger.debug('loader %d: batch tensor size (%d, %d, %d) queued'
                         % (self.thread_id, batch[0].shape[0], batch[0].shape[1], batch[0].shape[2]))
             self.queue.put(batch)
 
-        logger.info('loader %d stop')
+        logger.debug('loader %d stop')
 
 
 class MultiLoader():
     def __init__(self, dataset_list, queue, batch_size, worker_size):
 
-        logger.info('MultiLoader init start')
+        logger.debug('MultiLoader init start')
 
         self.dataset_list = dataset_list
         self.queue = queue
@@ -185,7 +185,7 @@ class MultiLoader():
                                               batch_size=self.batch_size,
                                               thread_id=i))
 
-        logger.info('MultiLoader init complete')
+        logger.debug('MultiLoader init complete')
 
     def start(self):
         for i in range(self.worker_size):

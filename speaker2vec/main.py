@@ -45,7 +45,7 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
     while True:
         batch += 1
 
-        logger.info('batch %d, queue length: %d' % (batch, queue.qsize()))
+        logger.debug('batch %d, queue length: %d' % (batch, queue.qsize()))
         if queue.empty():
             logger.info('queue is empty')
 
@@ -99,7 +99,7 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
 
             # log
             log_str = 'batch: {:4d}/{:4d}, batch size: {:3d} loss: {:.4f}, elapsed: {:.2f}s {:.2f}m {:.2f}h'. \
-                format(batch, total_batch_size, batch_size, total_loss / print_batch, elapsed, epoch_elapsed,
+                format(batch, total_batch_size, batch_size, print_loss / print_batch, elapsed, epoch_elapsed,
                        train_elapsed)
             logger.info(log_str)
 
@@ -191,7 +191,7 @@ def split_dataset(batch_size, valid_ratio, num_workers):
     # val_dataset: BaseDataset object of validation data
     valid_dataset = BaseDataset(file_paths[train_end_raw_id:], train_mode=False)
 
-    logger.info('train_dataset_list contains %d elements' % len(train_dataset_list))
+    logger.debug('train_dataset_list contains %d elements' % len(train_dataset_list))
 
     return train_batch_num, train_dataset_list, valid_dataset
 
@@ -231,7 +231,7 @@ def main():
 
     # split training and validation data
     train_batch_num, train_dataset_list, valid_dataset = split_dataset(batch_size=batch_size, valid_ratio=valid_ratio, num_workers=num_workers)
-    logger.info('number of batches: %d' % train_batch_num)
+    logger.debug('number of batches: %d' % train_batch_num)
 
     # begin logging
     logger.info('start')
