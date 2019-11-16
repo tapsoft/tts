@@ -44,8 +44,6 @@ def import_paths():
         file_paths.append(line[:-1])
     f.close()
 
-    return None
-
 
 def split_dataset(batch_size=8, valid_ratio=0.01, num_workers=2):
     train_loader_count = num_workers
