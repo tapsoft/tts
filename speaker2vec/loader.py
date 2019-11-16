@@ -68,7 +68,7 @@ def _collate_fn(batch):
     targets_list = []
 
     for feat in batch:
-        fs = feat.shape[2]
+        fs = feat.shape[1]
 
         # only use data with sufficient length
         if fs < 2*n_frames:
