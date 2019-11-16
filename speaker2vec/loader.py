@@ -25,7 +25,7 @@ hop_frames = 100
 def get_feature(filepath, sr=16000):
     # return mfcc feature as a numpy array with shape (n_mfcc, t)
     # load audio file
-    logger.info("\nfile: " + filepath[-22:])
+    logger.info("file: " + filepath[-22:])
     y, _ = librosa.load(filepath, mono=True, sr=sr)
     logger.info('loaded, lenth %d' % y.shape[0])
 
