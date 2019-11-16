@@ -19,13 +19,13 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format=FORMAT)
 logger.setLevel(logging.INFO)
 
 # input sliding window
-hop_frames = 50
+hop_frames = 100
 
 
 def get_feature(filepath, sr=16000):
     # return mfcc feature as a numpy array with shape (n_mfcc, t)
     # load audio file
-    print("\nfile: " + filepath)
+    logger.info("\nfile: " + filepath[-22:])
     y, _ = librosa.load(filepath, mono=True, sr=sr)
     logger.info('loaded, lenth %d' % y.shape[0])
 
@@ -63,6 +63,7 @@ def _collate_fn(batch):
     # batch: a list of numpy arrays with shape (n_mfcc, t) with varying t
     # apply fixed-size sliding window and obtain input-target pairs
     # return tensor shape (batch_size, n_mfcc, n_frames)
+    logger.info('collation start, batch size %d' % len(batch))
     inputs_list = []
     targets_list = []
 
@@ -97,6 +98,10 @@ def _collate_fn(batch):
 
     inputs = torch.from_numpy(inputs).to(torch.float32)
     targets = torch.from_numpy(targets).to(torch.float32)
+
+    logger.info('collation end, %d segment pairs generated' % len(inputs_list))
+
+    del inputs_list, targets_list
 
     return inputs, targets
 
