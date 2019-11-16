@@ -149,6 +149,10 @@ class BaseDataLoader(threading.Thread):
             # if no features, make empty batches (inputs, targets)
             if len(items) == 0:
                 batch = self.create_empty_batch()
+
+                if self.queue.full():
+                    logger.debug('queue is full')
+
                 self.queue.put(batch)
                 break
 
@@ -159,6 +163,10 @@ class BaseDataLoader(threading.Thread):
             batch = self.collate_fn(items)
             logger.debug('loader %d: batch tensor size (%d, %d, %d) queued'
                         % (self.thread_id, batch[0].shape[0], batch[0].shape[1], batch[0].shape[2]))
+
+            if self.queue.full():
+                logger.debug('queue is full')
+
             self.queue.put(batch)
 
         logger.debug('loader %d stop')
