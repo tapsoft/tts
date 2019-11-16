@@ -126,7 +126,8 @@ class BaseDataLoader(threading.Thread):
 
     def run(self):
         # make batches
-        logger.info('loader %d start' % self.thread_id)
+        logger.info('loader %d start, batch size %d, number of batches %d'
+                    % (self.thread_id, self.batch_size, math.ceil(self.dataset_count / self.batch_size)))
 
         while True:
             # make a batch as a list of features
@@ -149,7 +150,7 @@ class BaseDataLoader(threading.Thread):
 
             # construct batch tensors (inputs, targets)
             batch = self.collate_fn(items)
-            self.queue.put_nowait(batch)
+            self.queue.put(batch)
 
         logger.info('loader %d stop, batch tensor size (%d, %d, %d)'
                     % (self.thread_id, batch[0].shape[0], batch[0].shape[1], batch[0].shape[2]))

@@ -49,7 +49,7 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
             logger.info('queue is empty')
 
         # input, target tensor shapes: (batch_size, n_mfcc, n_frames)
-        inputs, targets = queue.get_nowait()
+        inputs, targets = queue.get()
         batch_size = inputs.shape[0]
 
         # no data from queue
