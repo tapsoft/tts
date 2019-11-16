@@ -29,7 +29,10 @@ def get_feature(filepath, sr=16000):
     logger.info("file: " + filepath)
 
     y, _ = librosa.load(filepath, mono=True, sr=sr)
+    logger.info('loaded')
+    
     yt, idx = librosa.effects.trim(y, top_db=25)
+    logger.info('trimmed')
 
     # extract mfcc features
     # 40 mel-space filters, 25ms hamming window, 10ms shift
