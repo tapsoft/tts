@@ -145,7 +145,9 @@ class BaseDataLoader(threading.Thread):
             for i in range(self.batch_size):
                 if self.index >= self.dataset_count:
                     break
-                items.append(self.dataset[self.index])
+                item = self.dataset[self.index]
+                logger.info('obtained item shape (%d, %d)' % (item.shape[0], item.shape[1]))
+                items.append(item)
                 self.index += 1
 
             # if no features, make empty batches (inputs, targets)
