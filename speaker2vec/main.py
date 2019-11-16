@@ -43,7 +43,7 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
 
     while True:
         batch += 1
-        logger.info('batch ', batch, ', queue length: ', queue.qsize())
+        logger.info('batch %d, queue length: %d' % (batch, queue.qsize()))
 
         if queue.empty():
             logger.info('queue is empty')
@@ -236,6 +236,7 @@ def main():
 
         train_queue = queue.Queue(num_workers * 2)
         train_loader = MultiLoader(train_dataset_list, train_queue, batch_size, num_workers)
+        train_loader.start()
 
         train_loss = train(model, train_batch_num, train_queue, criterion, optimizer, device, train_begin, num_workers, print_batch=10)
 
