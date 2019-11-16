@@ -43,6 +43,7 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
 
     while True:
         batch += 1
+        logger.info('batch ' + str(batch))
 
         if queue.empty():
             logger.debug('queue is empty')
@@ -91,11 +92,10 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
             epoch_elapsed = (current - epoch_begin) / 60.0
             train_elapsed = (current - train_begin) / 3600.0
 
-            log_str = 'batch: {:4d}/{:4d}, batch size: {:3d} loss: {:.4f}, elapsed: {:.2f}s {:.2f}m {:.2f}h'.\
-                format(batch, total_batch_size, batch_size, total_loss / total_num, elapsed, epoch_elapsed, train_elapsed)
-
             # log
-            print(log_str)
+            log_str = 'batch: {:4d}/{:4d}, batch size: {:3d} loss: {:.4f}, elapsed: {:.2f}s {:.2f}m {:.2f}h'. \
+                format(batch, total_batch_size, batch_size, total_loss / total_num, elapsed, epoch_elapsed,
+                       train_elapsed)
             logger.info(log_str)
 
             # reset time
