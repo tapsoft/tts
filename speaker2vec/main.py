@@ -27,7 +27,7 @@ max_epochs = 10
 batch_size = 32
 learning_rate = 1e-4
 valid_ratio = 0.01
-num_workers = 2
+num_workers = 4
 
 
 def train(model, total_batch_size, queue, criterion, optimizer, device, train_begin, train_loader_count, print_batch=5):
@@ -45,16 +45,16 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
     while True:
         batch += 1
 
-        try:
-            # input, target tensor shapes: (batch_size, n_mfcc, n_frames)
-            inputs, targets = queue.get()
-            batch_size = inputs.shape[0]
-        except queue.Empty:
+        if queue.empty():
             logger.debug('queue is empty')
             continue
-        else:
-            logger.debug('batch %d, queue length: %d, got a tensor of shape (%d, %d, %d)'
-                         % (batch, queue.qsize(), inputs.shape[0], inputs.shape[1], inputs.shape[2]))
+
+        # input, target tensor shapes: (batch_size, n_mfcc, n_frames)
+        inputs, targets = queue.get()
+        batch_size = inputs.shape[0]
+
+        logger.debug('batch %d, queue length: %d, got a tensor of shape (%d, %d, %d)'
+                     % (batch, queue.qsize(), inputs.shape[0], inputs.shape[1], inputs.shape[2]))
 
         # no data from queue
         if inputs.shape[0] == 0:
