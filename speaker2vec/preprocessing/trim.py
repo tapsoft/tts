@@ -1,14 +1,9 @@
-import wave
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-def trim(data, cfg_trim):
-    
-    threshold_attack = cfg_trim["threshold_attack"]
-    threshold_release = cfg_trim["threshold_release"]
-    attack_margin = cfg_trim["attack_margin"]
-    release_margin = cfg_trim["release_margin"]
+def trim(data, threshold_attack=0.01, threshold_release=0.01, attack_margin=5000, release_margin=5000):
 
     data_size = len(data)
     cut_head = 0
@@ -41,7 +36,7 @@ def trim(data, cfg_trim):
             cut_tail = np.min([sample_num + release_margin, data_size])
             break
 
-    #print("trimmed audio length = ", cut_tail-cut_head+1)
+    print("trimmed audio length = ", cut_tail-cut_head+1)
 
     data_copy = data[cut_head:cut_tail]
     del w, time, kernel, data
