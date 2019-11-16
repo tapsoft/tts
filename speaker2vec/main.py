@@ -23,9 +23,9 @@ n_mfcc = 40
 n_frames = 100
 
 # hyperparameters
-max_epochs = 10
+max_epochs = 100
 batch_size = 64
-learning_rate = 1e-4
+learning_rate = 1e-5
 valid_ratio = 0.01
 num_workers = 4
 
