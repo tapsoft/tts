@@ -158,7 +158,7 @@ def load(filename, model, optimizer):
     model.load_state_dict(state['model'])
     if 'optimizer' in state and optimizer:
         optimizer.load_state_dict(state['optimizer'])
-    logger.info('checkpoint loaded')
+    logger.info('checkpoint loaded from ' + filename)
     return state['best_loss']
 
 
@@ -169,11 +169,11 @@ def save(filename, model, optimizer, best_loss):
         'best_loss': best_loss
     }
     torch.save(state, filename)
-    logger.info('checkpoint saved')
+    logger.info('checkpoint saved at ' + filename)
 
 
 def import_paths():
-    print("loading file paths")
+    logger.info("loading file paths")
     f = open(FILE_PATHS, "r")
     lines = f.readlines()
     for line in lines:
@@ -231,7 +231,7 @@ def main():
 
     # initialize model
     model = AutoEncoder(d=n_mfcc*n_frames)
-    print("model:", model)
+    logger.info("model:", model)
 
     # load model to device
     model = nn.DataParallel(model).to(device)
@@ -252,8 +252,8 @@ def main():
     # import data file paths
     import_paths()
     for i in range(10):
-        print(file_paths[i])
-    print("...")
+        logger.debug(file_paths[i])
+    logger.debug("...")
     # randomly shuffle data
     random.shuffle(file_paths)
 
@@ -269,7 +269,7 @@ def main():
 
     train_begin = time.time()
     for epoch in range(begin_epoch, max_epochs):
-        print("epoch", epoch+1)
+        logger.info("epoch", epoch+1)
 
         train_queue = queue.Queue(num_workers * 2)
         train_loader = MultiLoader(train_dataset_list, train_queue, batch_size, num_workers)
@@ -284,10 +284,10 @@ def main():
         valid_loader = BaseDataLoader(valid_dataset, valid_queue, batch_size, 0)
         valid_loader.start()
 
-        print("start eval")
+        logger.info("start eval")
         eval_loss = evaluate(model, valid_loader, valid_queue, criterion, device)
         valid_loader.join()
-        print("end eval")
+        logger.info("end eval")
 
         # save every epoch
         save_name = SAVE_PATH + "model_%03d" % epoch + ".pt"
@@ -296,7 +296,7 @@ def main():
         # save best loss model
         is_best_loss = (eval_loss < best_loss)
         if is_best_loss:
-            print("best model: " + save_name)
+            logger.info("best model: " + save_name)
             best_loss = eval_loss
             save_name = SAVE_PATH + "best_eval.pt"
             save(save_name, model, optimizer, best_loss)
