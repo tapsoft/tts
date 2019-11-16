@@ -272,15 +272,15 @@ def main():
     for epoch in range(begin_epoch, max_epochs):
         logger.info("epoch: %d" % (epoch+1))
 
-        train_queue = queue.Queue()  # num_workers * 2
+        train_queue = queue.Queue(num_workers * 2)
         train_loader = MultiLoader(train_dataset_list, train_queue, batch_size, num_workers)
 
         train_loader.start()
-        train_loss = train(model, train_batch_num, train_queue, criterion, optimizer, device, train_begin, num_workers, print_batch=10)
+        train_loss = train(model, train_batch_num, train_queue, criterion, optimizer, device, train_begin, num_workers, print_batch=5)
         logger.info("Epoch %d Training Loss %0.4f" % (epoch, train_loss))
         train_loader.join()
 
-        valid_queue = queue.Queue()  # num_workers * 2
+        valid_queue = queue.Queue(num_workers * 2)
         valid_loader = BaseDataLoader(valid_dataset, valid_queue, batch_size, 0)
 
         valid_loader.start()
