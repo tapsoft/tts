@@ -16,7 +16,7 @@ from AutoEncoder import AutoEncoder
 # FILE_PATHS = "D:/GitHub_Repos/zeroshot-tts-korean/file_paths.txt"
 FILE_PATHS = "/home/cs470/zeroshot-tts-korean/file_paths.txt"
 file_paths = []
-SAVE_PATH = "~/zeroshot-tts-korean/speaker2vec/checkpoints/"
+SAVE_PATH = "./checkpoints/"
 
 # preprocessing
 n_mfcc = 40
