@@ -16,7 +16,7 @@ from AutoEncoder import AutoEncoder
 # FILE_PATHS = "D:/GitHub_Repos/zeroshot-tts-korean/file_paths.txt"
 FILE_PATHS = "/home/cs470/zeroshot-tts-korean/file_paths.txt"
 file_paths = []
-SAVE_PATH = "/home/cd470/zeroshot-tts-korean/speaker2vec/checkpoints/"
+SAVE_PATH = "~/zeroshot-tts-korean/speaker2vec/checkpoints/"
 
 # preprocessing
 n_mfcc = 40
@@ -253,6 +253,10 @@ def main():
     else:
         logger.info('checkpoint loaded; current best loss %0.4f' % loaded_loss)
 
+    # check for valid save path
+    save_name = SAVE_PATH + "dummy.pt"
+    save(save_name, model, optimizer, best_loss=1e20)
+
     # import data file paths
     import_paths()
     for i in range(10):
@@ -293,7 +297,7 @@ def main():
         logger.info("end eval")
 
         # save every epoch
-        save_name = SAVE_PATH + "model_%03d" % epoch + ".pt"
+        save_name = SAVE_PATH + "model_%03d" % (epoch + 1) + ".pt"
         save(save_name, model, optimizer, train_loss)
 
         # save best loss model
