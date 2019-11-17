@@ -19,7 +19,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format=FORMAT)
 logger.setLevel(logging.INFO)
 
 # input sliding window
-hop_frames = 100
+hop_frames = 500
 
 class BaseDataset(Dataset):
     # custom dataset class

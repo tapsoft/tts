@@ -11,6 +11,7 @@ import numpy as np
 #import matplotlib.pyplot as plt
 from loader import *
 from AutoEncoder import AutoEncoder
+from torch.optim.lr_scheduler import StepLR
 
 # training data location
 # FILE_PATHS = "D:/GitHub_Repos/zeroshot-tts-korean/file_paths.txt"
@@ -25,7 +26,8 @@ n_frames = 100
 # hyperparameters
 max_epochs = 100
 batch_size = 128
-learning_rate = 1e-5
+learning_rate = 1e-2
+lr_decay_rate = 0.96
 valid_ratio = 0.01
 num_workers = 4
 
@@ -272,6 +274,9 @@ def main():
     train_batch_num, train_dataset_list, valid_dataset = split_dataset(batch_size=batch_size, valid_ratio=valid_ratio, num_workers=num_workers)
     logger.debug('number of batches: %d' % train_batch_num)
 
+    # learning rate scheduler
+    lr_scheduler = StepLR(optimizer, step_size=1, gamma=lr_decay_rate)
+
     # begin logging
     logger.info('start')
 
@@ -284,6 +289,7 @@ def main():
 
         train_loader.start()
         train_loss = train(model, train_batch_num, train_queue, criterion, optimizer, device, train_begin, num_workers, print_batch=5)
+        lr_scheduler.step(epoch)
         logger.info("Epoch %d Training Loss %0.4f" % (epoch, train_loss))
         train_loader.join()
 

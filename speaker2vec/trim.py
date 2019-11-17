@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def trim(data, threshold_attack=0.01, threshold_release=0.01, attack_margin=1000, release_margin=1000):
+def trim(data, threshold_attack=0.01, threshold_release=0.01, attack_margin=500, release_margin=500):
 
     data_size = len(data)
     cut_head = 0
