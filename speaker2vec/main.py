@@ -250,7 +250,7 @@ def main():
     try:
         logger.info('loading checkpoint...')
         loaded_loss = load(SAVE_PATH + "best_eval.pt", model, optimizer)
-    except (RuntimeError, FileNotFoundError):
+    except:
         logger.info('no checkpoint loaded')
     else:
         logger.info('checkpoint loaded; current best loss %0.4f' % loaded_loss)

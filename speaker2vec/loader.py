@@ -21,6 +21,7 @@ logger.setLevel(logging.INFO)
 # input sliding window
 hop_frames = 500
 
+
 class BaseDataset(Dataset):
     # custom dataset class
     def __init__(self, file_paths, train_mode=False):
