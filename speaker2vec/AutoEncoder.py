@@ -50,12 +50,12 @@ class AutoEncoder(nn.Module):
         # forward
         x = self.dropout(self.relu(self.bn1(self.enc1(x))))
         x = self.dropout(self.relu(self.bn2(self.enc2(x))))
-        x = self.dropout(self.relu(self.bn3(self.enc3(x))))
+        embedding = self.dropout(self.relu(self.bn3(self.enc3(x))))
 
         if save_latent:
-            self.latent = x.clone().detach().requires_grad_(False).cpu().numpy()
+            self.latent = embedding.clone().detach().requires_grad_(False).cpu().numpy()
 
-        x = self.dropout(self.relu(self.bn4(self.dec1(x))))
+        x = self.dropout(self.relu(self.bn4(self.dec1(embedding))))
         x = self.dropout(self.relu(self.bn5(self.dec2(x))))
         o = self.dec3(x)
 

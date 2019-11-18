@@ -146,9 +146,10 @@ with torch.no_grad():
 
     # compressed features as a numpy array of (batch_size, hidden_size)
     latent = model.module.latent
-    np.savetxt("latent.csv", latent, delimiter=",")
 
 vis_loader.join()
+
+print(latent)
 
 pca = PCA(n_components=2)
 pca_result = pca.fit_transform(latent)
