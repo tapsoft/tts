@@ -52,7 +52,9 @@ class AutoEncoder(nn.Module):
         x = self.dropout(self.relu(self.bn2(self.enc2(x))))
         embedding = self.dropout(self.relu(self.bn3(self.enc3(x))))
 
-        self.latent = embedding.clone().detach().requires_grad_(False).cpu().numpy()
+        embedding_np = embedding.clone().detach().requires_grad_(False).cpu().numpy()
+        print(embedding_np)
+        self.latent = embedding_np
 
         x = self.dropout(self.relu(self.bn4(self.dec1(embedding))))
         x = self.dropout(self.relu(self.bn5(self.dec2(x))))
