@@ -147,10 +147,8 @@ with torch.no_grad():
 
 vis_loader.join()
 
-print(embedding)
-
 pca = PCA(n_components=2)
-pca_result = pca.fit_transform(embedding)
+pca_result = pca.fit_transform(np.array(embedding))
 pca_1 = pca_result[:, 0]
 pca_2 = pca_result[:, 1]
 print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
