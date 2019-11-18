@@ -129,7 +129,7 @@ vis_loader = BaseDataLoader(vis_dataset, vis_queue, num_samples, 0)
 vis_loader.start()
 
 # begin logging
-logger.info('evaluate() start')
+logger.info('visualize start')
 begin = time.time()
 
 with torch.no_grad():
@@ -143,12 +143,13 @@ with torch.no_grad():
     # output tensor shape: (batch_size, n_mfcc, n_frames)
     # forward pass
     # compressed features as a numpy array of (batch_size, hidden_size)
-    embedding = model(inputs)
+    embedding = model(inputs).cpu().numpy()
 
 vis_loader.join()
 
 pca = PCA(n_components=2)
-pca_result = pca.fit_transform(np.array(embedding))
+embedding = np.array(embedding)
+pca_result = pca.fit_transform(embedding)
 pca_1 = pca_result[:, 0]
 pca_2 = pca_result[:, 1]
 print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
