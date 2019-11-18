@@ -64,7 +64,7 @@ get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_269097.
 ######################################################################################################
 
 file_paths = []
-num_samples = 100
+num_samples = 10000
 
 
 def load(filename, model, optimizer):
@@ -144,7 +144,6 @@ with torch.no_grad():
     # forward pass
     # compressed features as a numpy array of (batch_size, hidden_size)
     _, embedding = model(inputs)
-    print(embedding)
     embedding = np.array(embedding.clone().detach().cpu().numpy())
 
 vis_loader.join()
