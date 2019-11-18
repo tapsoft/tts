@@ -145,7 +145,7 @@ with torch.no_grad():
     output = model(inputs, save_latent=True).to(device)
 
     # compressed features as a numpy array of (batch_size, hidden_size)
-    latent = model.latent
+    latent = model.cpu().latent
     np.savetxt("latent.csv", latent, delimiter=",")
 
 vis_loader.join()
