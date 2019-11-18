@@ -154,9 +154,20 @@ pca_1 = pca_result[:, 0]
 pca_2 = pca_result[:, 1]
 print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))
 
-fig = plt.figure(figsize=(16, 10))
+fig = plt.figure(figsize=(16, 16))
 plt.scatter(x=np.squeeze(pca_1), y=np.squeeze(pca_2))
 plt.title("PCA")
 plt.xlabel("component 1")
 plt.ylabel("component 2")
 fig.savefig('./PCA.png')
+
+tsne = TSNE(random_state=0)
+tsne_result = tsne.fit_transform(embedding)
+tsne_1 = tsne_result[:, 0]
+tsne_2 = tsne_result[:, 1]
+fig = plt.figure(figsize=(16, 16))
+plt.scatter(x=np.squeeze(tsne_1), y=np.squeeze(tsne_2))
+plt.title("t-SNE")
+plt.xlabel("component 1")
+plt.ylabel("component 2")
+fig.savefig('./TSNE.png')
