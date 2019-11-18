@@ -142,17 +142,15 @@ with torch.no_grad():
 
     # output tensor shape: (batch_size, n_mfcc, n_frames)
     # forward pass
-    output = model(inputs).to(device)
-
     # compressed features as a numpy array of (batch_size, hidden_size)
-    latent = model.module.latent
+    embedding = model(inputs)
 
 vis_loader.join()
 
-print(latent)
+print(embedding)
 
 pca = PCA(n_components=2)
-pca_result = pca.fit_transform(latent)
+pca_result = pca.fit_transform(embedding)
 pca_1 = pca_result[:, 0]
 pca_2 = pca_result[:, 1]
 print('Explained variation per principal component: {}'.format(pca.explained_variance_ratio_))

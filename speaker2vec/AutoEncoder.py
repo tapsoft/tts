@@ -35,10 +35,7 @@ class AutoEncoder(nn.Module):
         nn.init.xavier_normal_(self.dec2.weight)
         nn.init.xavier_normal_(self.dec3.weight)
 
-        # recently computed latent feature
-        self.latent = None
-
-    def forward(self, x):
+    def forward(self, x, return_embedding=False):
         # input, output tensor shapes: (batch_size, n_mfcc, n_frames)
         batch_size = x.shape[0]
         n_mfcc = x.shape[1]
@@ -53,8 +50,8 @@ class AutoEncoder(nn.Module):
         embedding = self.dropout(self.relu(self.bn3(self.enc3(x))))
 
         embedding_np = embedding.clone().detach().requires_grad_(False).cpu().numpy()
-        print(embedding_np)
-        self.latent = embedding_np
+        if return_embedding:
+            return embedding_np
 
         x = self.dropout(self.relu(self.bn4(self.dec1(embedding))))
         x = self.dropout(self.relu(self.bn5(self.dec2(x))))
