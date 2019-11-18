@@ -300,10 +300,6 @@ def main():
         valid_loader.join()
         logger.info("end eval")
 
-        # save every epoch
-        save_name = SAVE_PATH + "model_%03d" % (epoch + 1) + ".pt"
-        save(save_name, model, optimizer, train_loss)
-
         # save best loss model
         is_best_loss = (eval_loss < best_loss)
         if is_best_loss:
