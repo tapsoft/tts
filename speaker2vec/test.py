@@ -54,14 +54,14 @@ def get_feature(filepath):
     del sig, sigt
     return feat
 
-
+"""
 get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_0001/KsponSpeech_000001.wav")
 get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_0001/KsponSpeech_000011.wav")
 get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_0001/KsponSpeech_000777.wav")
 get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_0001/KsponSpeech_000111.wav")
 get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_621857.wav")
 get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_269097.wav")
-
+"""
 ######################################################################################################
 
 file_paths = []
