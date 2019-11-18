@@ -1,7 +1,7 @@
 import numpy as np
-import matplotlib
-matplotlib.use('AGG')
-import matplotlib.pyplot as plt
+#import matplotlib
+#matplotlib.use('AGG')
+#import matplotlib.pyplot as plt
 import scipy.io.wavfile as wav
 from trim import trim
 from python_speech_features import mfcc
@@ -15,7 +15,7 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 ######################################################################################################
-
+"""
 def get_feature(filepath):
     # return mfcc feature as a numpy array with shape (n_mfcc, t)
     print("file: " + filepath[-22:])
@@ -61,7 +61,7 @@ get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_0001/Ks
 get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_0001/KsponSpeech_000111.wav")
 get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_621857.wav")
 get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_269097.wav")
-
+"""
 ######################################################################################################
 
 file_paths = []
@@ -132,9 +132,10 @@ with torch.no_grad():
 
     # compressed features as a numpy array of (batch_size, hidden_size)
     latent = model.latent
+    np.savetxt("latent.csv", latent, delimiter=",")
 
 vis_loader.join()
-
+"""
 pca = PCA(n_components=2)
 pca_result = pca.fit_transform(latent)
 pca_1 = pca_result[:, 0]
@@ -147,5 +148,4 @@ plt.title("PCA")
 plt.xlabel("component 1")
 plt.ylabel("component 2")
 fig.savefig('./PCA.png')
-
-
+"""
