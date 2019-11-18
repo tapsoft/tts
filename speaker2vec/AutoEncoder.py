@@ -35,7 +35,10 @@ class AutoEncoder(nn.Module):
         nn.init.xavier_normal_(self.dec2.weight)
         nn.init.xavier_normal_(self.dec3.weight)
 
-    def forward(self, x):
+        # recently computed latent feature
+        self.latent = None
+
+    def forward(self, x, save_latent=False):
         # input, output tensor shapes: (batch_size, n_mfcc, n_frames)
         batch_size = x.shape[0]
         n_mfcc = x.shape[1]
@@ -48,6 +51,10 @@ class AutoEncoder(nn.Module):
         x = self.dropout(self.relu(self.bn1(self.enc1(x))))
         x = self.dropout(self.relu(self.bn2(self.enc2(x))))
         x = self.dropout(self.relu(self.bn3(self.enc3(x))))
+
+        if self.save_latent:
+            self.latent = torch.tensor(x, requires_grad=False).cpu().numpy()
+
         x = self.dropout(self.relu(self.bn4(self.dec1(x))))
         x = self.dropout(self.relu(self.bn5(self.dec2(x))))
         o = self.dec3(x)

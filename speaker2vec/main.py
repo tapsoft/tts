@@ -224,12 +224,10 @@ def split_dataset(batch_size, valid_ratio, num_workers):
 
 def main():
     # set random seed
-    """
     seed = 1
     random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-    """
 
     # set device
     cuda = torch.cuda.is_available()
