@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib
-matplotlib.use('agg')
+matplotlib.use('AGG')
 import matplotlib.pyplot as plt
 import scipy.io.wavfile as wav
 from trim import trim
