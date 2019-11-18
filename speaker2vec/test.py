@@ -144,7 +144,8 @@ with torch.no_grad():
     # forward pass
     # compressed features as a numpy array of (batch_size, hidden_size)
     _, embedding = model(inputs).to(device)
-    embedding = np.array(embedding.cpu().numpy())
+    print(embedding)
+    embedding = np.array(embedding.clone().detach().cpu().numpy())
 
 vis_loader.join()
 
