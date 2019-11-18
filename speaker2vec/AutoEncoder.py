@@ -49,7 +49,7 @@ class AutoEncoder(nn.Module):
         x = self.dropout(self.relu(self.bn2(self.enc2(x))))
         embedding = self.dropout(self.relu(self.bn3(self.enc3(x))))
 
-        embedding_np = embedding.clone().detach().requires_grad_(False).cpu().numpy()
+        embedding_np = embedding.clone().detach().cpu().numpy()
         if return_embedding:
             return embedding_np
 
