@@ -35,7 +35,6 @@ def get_feature(filepath):
     # feat = np.random.randn(40, 400)
     print("feature obtained, shape (%d, %d)" % (feat.shape[0], feat.shape[1]))
 
-
     plt.subplot(4, 1, 1)
     plt.plot(sig)
     plt.subplot(4, 1, 2)
@@ -78,7 +77,12 @@ cuda = torch.cuda.is_available()
 device = torch.device('cuda' if cuda else 'cpu')
 
 # import data file paths
-import_paths()
+f = open(FILE_PATHS, "r")
+lines = f.readlines()
+for line in lines:
+    file_paths.append(line[:-1])
+f.close()
+
 for i in range(10):
     logger.debug(file_paths[i])
 logger.debug("...")
