@@ -64,7 +64,7 @@ get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_269097.
 ######################################################################################################
 
 file_paths = []
-num_samples = 100
+num_samples = 1000
 
 
 def load(filename, model, optimizer):
