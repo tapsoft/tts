@@ -143,7 +143,7 @@ with torch.no_grad():
     # output tensor shape: (batch_size, n_mfcc, n_frames)
     # forward pass
     # compressed features as a numpy array of (batch_size, hidden_size)
-    _, embedding = model(inputs).to(device)
+    _, embedding = model(inputs)
     print(embedding)
     embedding = np.array(embedding.clone().detach().cpu().numpy())
 

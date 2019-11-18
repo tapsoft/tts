@@ -78,7 +78,8 @@ def train(model, total_batch_size, queue, criterion, optimizer, device, train_be
 
         # output tensor shape: (batch_size, n_mfcc, n_frames)
         # forward pass
-        output, _ = model(inputs).to(device)
+        output, _ = model(inputs)
+        output = output.to(device)
 
         # compute loss
         loss = criterion(output.contiguous().view(-1), targets.contiguous().view(-1))
