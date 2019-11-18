@@ -66,6 +66,16 @@ get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_269097.
 file_paths = []
 num_samples = 100
 
+
+def load(filename, model, optimizer):
+    state = torch.load(filename)
+    model.load_state_dict(state['model'])
+    if 'optimizer' in state and optimizer:
+        optimizer.load_state_dict(state['optimizer'])
+    logger.info('checkpoint loaded from ' + filename)
+    return state['best_loss']
+
+
 # set random seed
 seed = 1
 random.seed(seed)
