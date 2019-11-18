@@ -142,7 +142,7 @@ with torch.no_grad():
 
     # output tensor shape: (batch_size, n_mfcc, n_frames)
     # forward pass
-    output = model(inputs, save_latent=True).to(device)
+    output = model(inputs).to(device)
 
     # compressed features as a numpy array of (batch_size, hidden_size)
     latent = model.module.latent

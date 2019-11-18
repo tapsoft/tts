@@ -38,7 +38,7 @@ class AutoEncoder(nn.Module):
         # recently computed latent feature
         self.latent = None
 
-    def forward(self, x, save_latent=False):
+    def forward(self, x):
         # input, output tensor shapes: (batch_size, n_mfcc, n_frames)
         batch_size = x.shape[0]
         n_mfcc = x.shape[1]
@@ -52,8 +52,7 @@ class AutoEncoder(nn.Module):
         x = self.dropout(self.relu(self.bn2(self.enc2(x))))
         embedding = self.dropout(self.relu(self.bn3(self.enc3(x))))
 
-        if save_latent:
-            self.latent = embedding.clone().detach().requires_grad_(False).cpu().numpy()
+        self.latent = embedding.clone().detach().requires_grad_(False).cpu().numpy()
 
         x = self.dropout(self.relu(self.bn4(self.dec1(embedding))))
         x = self.dropout(self.relu(self.bn5(self.dec2(x))))
