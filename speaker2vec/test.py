@@ -148,8 +148,7 @@ with torch.no_grad():
 vis_loader.join()
 
 pca = PCA(n_components=2)
-print(embedding.shape)
-embedding = np.array(embedding)
+embedding = np.array(embedding.reshape((embedding.shape[0], -1)))
 pca_result = pca.fit_transform(embedding)
 pca_1 = pca_result[:, 0]
 pca_2 = pca_result[:, 1]
