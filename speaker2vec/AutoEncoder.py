@@ -35,7 +35,7 @@ class AutoEncoder(nn.Module):
         nn.init.xavier_normal_(self.dec2.weight)
         nn.init.xavier_normal_(self.dec3.weight)
 
-    def forward(self, x, return_embedding=False):
+    def forward(self, x):
         # input, output tensor shapes: (batch_size, n_mfcc, n_frames)
         batch_size = x.shape[0]
         n_mfcc = x.shape[1]
@@ -50,8 +50,6 @@ class AutoEncoder(nn.Module):
         embedding = self.dropout(self.relu(self.bn3(self.enc3(x))))
 
         embedding_np = embedding.clone().detach().cpu().numpy()
-        if return_embedding:
-            return embedding_np
 
         x = self.dropout(self.relu(self.bn4(self.dec1(embedding))))
         x = self.dropout(self.relu(self.bn5(self.dec2(x))))
@@ -60,4 +58,8 @@ class AutoEncoder(nn.Module):
         # 1d -> 2d
         o = torch.reshape(o, (batch_size, n_mfcc, n_frames))
 
-        return o
+        outs = dict()
+        outs['embedding'] = embedding_np
+        outs['output'] = o
+
+        return outs

@@ -64,7 +64,7 @@ get_feature("D:/GitHub_Repos/zeroshot-tts-korean/data_sample/KsponSpeech_269097.
 ######################################################################################################
 
 file_paths = []
-num_samples = 10000
+num_samples = 100
 
 
 def load(filename, model, optimizer):
@@ -143,12 +143,12 @@ with torch.no_grad():
     # output tensor shape: (batch_size, n_mfcc, n_frames)
     # forward pass
     # compressed features as a numpy array of (batch_size, hidden_size)
-    embedding = model(inputs).cpu().numpy()
+    embedding = model(inputs)['embedding'].cpu().numpy()
+    embedding = np.array(embedding)
 
 vis_loader.join()
 
 pca = PCA(n_components=2)
-embedding = np.array(embedding.reshape((embedding.shape[0], -1)))
 pca_result = pca.fit_transform(embedding)
 pca_1 = pca_result[:, 0]
 pca_2 = pca_result[:, 1]
@@ -165,6 +165,7 @@ tsne = TSNE(random_state=0)
 tsne_result = tsne.fit_transform(embedding)
 tsne_1 = tsne_result[:, 0]
 tsne_2 = tsne_result[:, 1]
+
 fig = plt.figure(figsize=(16, 16))
 plt.scatter(x=np.squeeze(tsne_1), y=np.squeeze(tsne_2))
 plt.title("t-SNE")
