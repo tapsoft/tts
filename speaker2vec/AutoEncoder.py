@@ -49,13 +49,12 @@ class AutoEncoder(nn.Module):
         x = self.dropout(self.relu(self.bn1(self.enc1(x))))
         x = self.dropout(self.relu(self.bn2(self.enc2(x))))
         embedding = self.dropout(self.relu(self.bn3(self.enc3(x))))
-        outs['embedding'] = embedding.clone().detach().cpu().numpy()
+        e_np = embedding.clone().detach().cpu().numpy()
         x = self.dropout(self.relu(self.bn4(self.dec1(embedding))))
         x = self.dropout(self.relu(self.bn5(self.dec2(x))))
         o = self.dec3(x)
 
         # 1d -> 2d
         o = torch.reshape(o, (batch_size, n_mfcc, n_frames))
-        outs['output'] = o
 
-        return outs
+        return o, e_np

@@ -143,7 +143,7 @@ with torch.no_grad():
     # output tensor shape: (batch_size, n_mfcc, n_frames)
     # forward pass
     # compressed features as a numpy array of (batch_size, hidden_size)
-    embedding = model(inputs)['embedding'].cpu().numpy()
+    embedding = model(inputs)[1].cpu().numpy()
     embedding = np.array(embedding)
 
 vis_loader.join()
