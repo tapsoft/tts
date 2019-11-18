@@ -52,7 +52,7 @@ class AutoEncoder(nn.Module):
         x = self.dropout(self.relu(self.bn2(self.enc2(x))))
         x = self.dropout(self.relu(self.bn3(self.enc3(x))))
 
-        if self.save_latent:
+        if save_latent:
             self.latent = torch.tensor(x, requires_grad=False).cpu().numpy()
 
         x = self.dropout(self.relu(self.bn4(self.dec1(x))))
