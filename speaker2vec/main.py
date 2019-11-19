@@ -26,7 +26,7 @@ n_frames = 100
 # hyperparameters
 max_epochs = 100
 batch_size = 512
-learning_rate = 1e-2
+learning_rate = 1e-3
 lr_decay_rate = 0.96
 valid_ratio = 0.01
 num_workers = 4
