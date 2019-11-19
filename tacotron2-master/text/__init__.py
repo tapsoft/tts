@@ -1,18 +1,10 @@
 """ from https://github.com/keithito/tacotron """
 import re
-#from text import cleaners
-#from text.symbols import symbols
+from text.symbols import symbols
 import torch
 import torch.utils.data
 
-_pad        = '_'
-_punctuation = '!\'(),.:;? '
-_special = '-'
-_letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
-
-###### TODO
-symbols = [_pad] + list(_special) + list(_punctuation) + list(_letters)
-
+nsymbols = len(symbols)
 
 # Mappings from symbol to numeric ID and vice versa:
 _symbol_to_id = {s: i for i, s in enumerate(symbols)}
@@ -37,18 +29,10 @@ def text_to_sequence(text):
   '''
   sequence = []
 
-  # Check for curly braces and treat their contents as ARPAbet:
-  while len(text):
-    m = _curly_re.match(text)
-    if not m:
-      sequence += _symbols_to_sequence(text)
-      break
-    sequence += _symbols_to_sequence(text)
-    sequence += _arpabet_to_sequence(m.group(2))
-    text = m.group(3)
+  for i in range(len(text)):
+    sequence += _symbols_to_sequence(text[i])
 
-  #print(sequence)
-  return sequence
+  return [nsymbols] + sequence + [nsymbols + 1]
 
 
 def sequence_to_text(sequence):
@@ -74,5 +58,3 @@ def _arpabet_to_sequence(text):
 
 def _should_keep_symbol(s):
   return s in _symbol_to_id and s is not '_' and s is not '~'
-
-#print (torch.IntTensor(text_to_sequence('abasdgh')))
