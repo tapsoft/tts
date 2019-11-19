@@ -16,7 +16,7 @@ from main import n_mfcc, n_frames
 logger = logging.getLogger('root')
 FORMAT = "[%(asctime)s %(filename)s:%(lineno)s - %(funcName)s()] %(message)s"
 logging.basicConfig(filename='./log.txt', level=logging.DEBUG, format=FORMAT)  # stream=sys.stdout
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 # input sliding window
 hop_frames = 500
