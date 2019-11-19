@@ -16,7 +16,7 @@ class AutoEncoder(nn.Module):
 
         # batch normalization
         self.bn1 = nn.BatchNorm1d(num_features=2000)
-        self.bn2 = nn.BatchNorm1d(num_features=256)
+        self.bn2 = nn.BatchNorm1d(num_features=40)
         self.bn3 = nn.BatchNorm1d(num_features=2000)
 
         # non-linearity and dropout
@@ -39,10 +39,9 @@ class AutoEncoder(nn.Module):
         x = torch.reshape(x, (batch_size, -1))
 
         # forward
-        outs = {}
-        x = self.dropout(self.relu(self.enc1(x)))
-        embedding = self.dropout(self.relu(self.enc2(x)))
-        x = self.dropout(self.relu(self.dec1(embedding)))
+        x = self.dropout(self.relu(self.bn1(self.enc1(x))))
+        embedding = self.dropout(self.relu(self.bn2(self.enc2(x))))
+        x = self.dropout(self.relu(self.bn3(self.dec1(embedding))))
         o = self.dec2(x)
 
         # 1d -> 2d
