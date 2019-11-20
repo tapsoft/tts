@@ -10,28 +10,6 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 
-"""
-def speaker_embedding(file_paths):
-    # file_paths: list of string
-    # return: numpy array of dim (num_paths, 256)
-    encoder_weights = Path('./encoder/pretrained.pt')
-    encoder.load_model(encoder_weights)
-
-    embeddings = []
-    for i, file_path in enumerate(file_paths):
-        print("file %d/%d import" % (i + 1, maxi))
-        in_fpath = Path(file_path)
-        reprocessed_wav = encoder.preprocess_wav(in_fpath)
-        original_wav, sampling_rate = librosa.load(in_fpath, sr=16000)
-        preprocessed_wav = encoder.preprocess_wav(original_wav, sampling_rate)
-        embed = encoder.embed_utterance(preprocessed_wav)
-        embeddings.append(embed)
-
-    embeddings = np.stack(embeddings, axis=0)
-
-    return embeddings
-"""
-
 encoder_weights = Path('./encoder/pretrained.pt')
 encoder.load_model(encoder_weights)
 
