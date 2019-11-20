@@ -1,8 +1,10 @@
 """ from https://github.com/keithito/tacotron """
 import re
-from text import cleaners
 from text.symbols import symbols
+import torch
+import torch.utils.data
 
+nsymbols = len(symbols)
 
 # Mappings from symbol to numeric ID and vice versa:
 _symbol_to_id = {s: i for i, s in enumerate(symbols)}
@@ -12,7 +14,7 @@ _id_to_symbol = {i: s for i, s in enumerate(symbols)}
 _curly_re = re.compile(r'(.*?)\{(.+?)\}(.*)')
 
 
-def text_to_sequence(text, cleaner_names):
+def text_to_sequence(text):
   '''Converts a string of text to a sequence of IDs corresponding to the symbols in the text.
 
     The text can optionally have ARPAbet sequences enclosed in curly braces embedded
@@ -27,17 +29,10 @@ def text_to_sequence(text, cleaner_names):
   '''
   sequence = []
 
-  # Check for curly braces and treat their contents as ARPAbet:
-  while len(text):
-    m = _curly_re.match(text)
-    if not m:
-      sequence += _symbols_to_sequence(_clean_text(text, cleaner_names))
-      break
-    sequence += _symbols_to_sequence(_clean_text(m.group(1), cleaner_names))
-    sequence += _arpabet_to_sequence(m.group(2))
-    text = m.group(3)
+  for i in range(len(text)):
+    sequence += _symbols_to_sequence(text[i])
 
-  return sequence
+  return [nsymbols] + sequence + [nsymbols + 1]
 
 
 def sequence_to_text(sequence):
@@ -51,15 +46,6 @@ def sequence_to_text(sequence):
         s = '{%s}' % s[1:]
       result += s
   return result.replace('}{', ' ')
-
-
-def _clean_text(text, cleaner_names):
-  for name in cleaner_names:
-    cleaner = getattr(cleaners, name)
-    if not cleaner:
-      raise Exception('Unknown cleaner: %s' % name)
-    text = cleaner(text)
-  return text
 
 
 def _symbols_to_sequence(symbols):
