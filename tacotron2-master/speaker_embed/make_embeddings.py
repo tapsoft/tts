@@ -10,6 +10,7 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 
+"""
 def speaker_embedding(file_paths):
     # file_paths: list of string
     # return: numpy array of dim (num_paths, 256)
@@ -29,6 +30,10 @@ def speaker_embedding(file_paths):
     embeddings = np.stack(embeddings, axis=0)
 
     return embeddings
+"""
+
+encoder_weights = Path('./encoder/pretrained.pt')
+encoder.load_model(encoder_weights)
 
 file_paths = []
 
