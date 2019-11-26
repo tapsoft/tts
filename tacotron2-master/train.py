@@ -211,8 +211,8 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
                 param_group['lr'] = learning_rate
 
             model.zero_grad()
-            x, y = model.parse_batch(batch)
-            y_pred = model(x)
+            x, y, speaker_embeddings = model.parse_batch(batch)
+            y_pred = model(x, speaker_embeddings)
 
             loss = criterion(y_pred, y)
             if hparams.distributed_run:
@@ -255,6 +255,7 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
 
 
 if __name__ == '__main__':
+    torch.multiprocessing.set_start_method('spawn', force=True)
     parser = argparse.ArgumentParser()
     parser.add_argument('-o', '--output_directory', type=str,
                         help='directory to save checkpoints')
