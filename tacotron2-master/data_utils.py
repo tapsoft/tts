@@ -7,6 +7,12 @@ import layers
 from utils import load_wav_to_torch, load_filepaths_and_text
 from text import text_to_sequence
 
+# load encoder
+from speaker_embed.encoder import inference as encoder
+from pathlib import Path
+encoder_weights = Path('./speaker_embed/encoder/pretrained.pt')
+encoder.load_model(encoder_weights)
+
 
 class TextMelLoader(torch.utils.data.Dataset):
     """
@@ -14,6 +20,7 @@ class TextMelLoader(torch.utils.data.Dataset):
         2) normalizes text and converts them to sequences of one-hot vectors
         3) computes mel-spectrograms from audio files.
     """
+    # UserAddition: encode all audio and return embeddings as a numpy array of shape (num_files, embedding_dim=256)
     def __init__(self, audiopaths_and_text, hparams):
         self.audiopaths_and_text = load_filepaths_and_text(audiopaths_and_text)
         self.text_cleaners = hparams.text_cleaners
@@ -32,7 +39,8 @@ class TextMelLoader(torch.utils.data.Dataset):
         audiopath, text = audiopath_and_text[0], audiopath_and_text[1]
         text = self.get_text(text)
         mel = self.get_mel(audiopath)
-        return (text, mel)
+        embed = self.get_embed(audiopath)
+        return (text, mel, embed)
 
     def get_mel(self, filename):
         if not self.load_mel_from_disk:
@@ -63,6 +71,18 @@ class TextMelLoader(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.audiopaths_and_text)
 
+    def get_embed(self, audiopath):
+        # load wav
+        audio, sampling_rate = load_wav_to_torch(audiopath)
+        audio = audio.numpy()
+
+        # in_fpath = Path(audiopath)
+        # reprocessed_wav = encoder.preprocess_wav(audiopath)
+        preprocessed_wav = encoder.preprocess_wav(audio, sampling_rate)
+        embed = encoder.embed_utterance(preprocessed_wav)
+
+        return embed
+
 
 class TextMelCollate():
     """ Zero-pads model inputs and targets based on number of frames per setep
@@ -74,7 +94,7 @@ class TextMelCollate():
         """Collate's training batch from normalized text and mel-spectrogram
         PARAMS
         ------
-        batch: [text_normalized, mel_normalized]
+        batch: [text_normalized, mel_normalized, embedding]
         """
         # Right zero-pad all one-hot text sequences to max input length
         input_lengths, ids_sorted_decreasing = torch.sort(
@@ -107,5 +127,12 @@ class TextMelCollate():
             gate_padded[i, mel.size(1)-1:] = 1
             output_lengths[i] = mel.size(1)
 
+        # include embedding
+        speaker_embeddings = torch.FloatTensor(len(batch), 256)
+        for i in range(len(ids_sorted_decreasing)):
+            embedding = batch[ids_sorted_decreasing[i]][2]
+            speaker_embeddings[i, :] = torch.from_numpy(embedding)
+
+
         return text_padded, input_lengths, mel_padded, gate_padded, \
-            output_lengths
+            output_lengths, speaker_embeddings
