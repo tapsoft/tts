@@ -3,14 +3,14 @@ import numpy as np
 import torch
 import torch.utils.data
 
-import layers
-from utils import load_wav_to_torch, load_filepaths_and_text
-from text import text_to_sequence
+import tacotron2.layers as layers
+from tacotron2.utils import load_wav_to_torch, load_filepaths_and_text
+from tacotron2.text import text_to_sequence
 
 # load encoder
-from speaker_embed.encoder import inference as encoder
+from tacotron2.speaker_embed.encoder import inference as encoder
 from pathlib import Path
-encoder_weights = Path('./speaker_embed/encoder/pretrained.pt')
+encoder_weights = Path('tacotron2/speaker_embed/encoder/pretrained.pt')
 encoder.load_model(encoder_weights)
 
 

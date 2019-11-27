@@ -1,6 +1,6 @@
 """ from https://github.com/keithito/tacotron """
 import re
-from text.symbols import symbols
+from tacotron2.text.symbols import symbols
 import torch
 import torch.utils.data
 

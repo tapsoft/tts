@@ -1,5 +1,5 @@
 import tensorflow as tf
-from text import symbols
+from tacotron2.text import symbols
 
 
 def create_hparams(hparams_string=None, verbose=False):
@@ -25,8 +25,8 @@ def create_hparams(hparams_string=None, verbose=False):
         # Data Parameters             #
         ################################
         load_mel_from_disk=False,
-        training_files='filelists/transcripts_korean_final_final.txt',
-        validation_files='filelists/transcripts_korean_final_validate.txt',
+        training_files='tacotron2/filelists/transcripts_korean_final_final.txt',
+        validation_files='tacotron2/filelists/transcripts_korean_final_validate.txt',
         text_cleaners=['english_cleaners'],
 
         ################################
