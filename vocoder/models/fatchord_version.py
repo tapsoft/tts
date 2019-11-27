@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from utils.distribution import sample_from_discretized_mix_logistic
-from utils.display import *
-from utils.dsp import *
+from vocoder.utils.distribution import sample_from_discretized_mix_logistic
+from vocoder.utils.display import *
+from vocoder.utils.dsp import *
 import os
 import numpy as np
 from pathlib import Path
