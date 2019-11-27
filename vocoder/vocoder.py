@@ -56,6 +56,6 @@ def generate(mel):
 
     # save_attention(attention, save_path)
 
-    mel = torch.tensor(mel).unsqueeze(0)
+    mel = torch.tensor(mel)
     mel = (mel + 4) / 8
     voc_model.generate(mel, save_path, False, 11_000, 550, hp.mu_law)
