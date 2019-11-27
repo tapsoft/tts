@@ -529,11 +529,15 @@ class Tacotron2(nn.Module):
             [mel_outputs, mel_outputs_postnet, gate_outputs, alignments],
             output_lengths)
 
-    def inference(self, inputs):
+    def inference(self, inputs, speaker_embeddings):
         embedded_inputs = self.embedding(inputs).transpose(1, 2)
         encoder_outputs = self.encoder.inference(embedded_inputs)
+
+        speaker_embeddings = tile(speaker_embeddings.view(1, 1, -1), 1, encoder_outputs.size()[1])
+        decoder_inputs = torch.cat((encoder_outputs, speaker_embeddings), 2)
+
         mel_outputs, gate_outputs, alignments = self.decoder.inference(
-            encoder_outputs)
+            decoder_inputs)
 
         mel_outputs_postnet = self.postnet(mel_outputs)
         mel_outputs_postnet = mel_outputs + mel_outputs_postnet
