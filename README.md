@@ -1,25 +1,17 @@
 # Team 18 CS470 Final Project
+20150144 김상우 / 20193138 김재윤 / 20160171 김진우 / 20193649 하진철
+
 ## Transfer Learning from Speaker Verification to Zero-Shot Multispeaker Korean Text-To-Speech Synthesis
 
+Project goal: **Option 2** - we are solving our own problem.
 Proposal link: https://docs.google.com/document/d/1x8I7riwTYUAlwgf8Ou8jAZ57uNL79e8VIzXJ8rxSlEg/
-
 Korean multispeaker speech dataset: http://www.aihub.or.kr/content/552
 
-## Inference
+## What is this?
 
-1. Install required packages by running following command on linux terminal.
-```
-pip install -r requirements.txt
-```
+We aim to build a TTS system that generates a Korean dialogue from text in the voice of unseen speaker, given only few seconds of speech audio. For this task, we directly applied the model in the following paper: **Ye Jia et al. (2018). Transfer Learning from Speaker Verification to Multispeaker Text-To-Speech Synthesis. ** ***NIPS.***
 
-2. Place input text ```input_text.txt``` and reference voice ```input_voice.wav``` in ```./input``` folder.
-
-3. Run ```run.py``` on python interpreter.
-```
-python3 ./run.py
-```
-
-4. Find generated speech at ```./output/generated.wav```.
+Yet, instead of just using the complete code, we retrieved separate implementations of submodules of the model and reconstructed the pipeline.
 
 ## Modules in repository
 
@@ -27,11 +19,11 @@ python3 ./run.py
 
 ```./output```: Output stored
 
-```./past```: **[unused]** Contains **autoencoder-based, unsupervised speaker embedding generator**. As RNN-based embedder pretrained on English dataset turned out to perform better than this model, we are not using this.
-
 ```./tacotron2```: Directory for **tacotron2-based text-to-mel spectrogram synthesizer**. Uses **RNN-based speaker embedding generator** at ```./tacotron2/speaker_embed```, pretrained on English speaker verification task.
 
 ```./vocoder```: Directory for **WaveNet-based mel-to-audio vocoder**.
+
+```./past```: **[unused]** Contains **autoencoder-based, unsupervised speaker embedding generator**. As RNN-based embedder pretrained on English dataset turned out to perform better than this model, we are not using this.
 
 ## Overall model description
 
@@ -53,7 +45,7 @@ Our TTS model consists of 3 independently trained modules (location in repo desc
 - Pretrained on English audio, fine-tuned by us.
 - Source: WaveRNN (https://github.com/fatchord/WaveRNN)
 ---
-*4. Speaker embedding generator (Speaker2Vec, autoencoder-based) [unused]*
+*4. [unused] Speaker embedding generator (Speaker2Vec, autoencoder-based)*
 - From several seconds of voice sample in ```.wav``` format, generates 40-dim vector encoding speaker identity (of even unseen ones).
 - Trained unsupervisedly assumming short-term active-speaker stationarity (details in report).
 - Source: Autoencoder-based architecture implemented by us
@@ -61,4 +53,26 @@ Our TTS model consists of 3 independently trained modules (location in repo desc
 ---
 We constructed a merged pipeline including **module 1, 2 and 3**, so that running ```run.py``` should be sufficient.
 
-## Detailed pipeline
+## Inference
+
+1. Install required packages by running following command on linux terminal.
+```
+pip install -r requirements.txt
+```
+
+2. Place input text ```input_text.txt``` and reference voice ```input_voice.wav``` in ```./input``` folder.
+
+3. Run ```run.py``` on python interpreter.
+```
+python3 ./run.py
+```
+
+4. Find generated speech at ```./output/generated.wav```.
+
+## Repository structure
+
+
+
+## Function description
+
+
