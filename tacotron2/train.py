@@ -145,6 +145,8 @@ def validate(model, criterion, valset, iteration, batch_size, n_gpus,
         print("Validation loss {}: {:9f}  ".format(iteration, reduced_val_loss))
         logger.log_validation(val_loss, model, y, y_pred, iteration)
 
+    return val_loss
+
 
 def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
           rank, group_name, hparams):
@@ -188,6 +190,7 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
     # Load checkpoint if one exists
     iteration = 0
     epoch_offset = 0
+    val_loss_best = 1e20
     if checkpoint_path is not None:
         if warm_start:
             model = warm_start_model(
@@ -244,14 +247,23 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
 
             iteration += 1
             if not is_overflow and (iteration % hparams.iters_per_checkpoint == 0):
-                validate(model, criterion, valset, iteration,
-                         hparams.batch_size, n_gpus, collate_fn, logger,
-                         hparams.distributed_run, rank)
+                val_loss = validate(model, criterion, valset, iteration,
+                                    hparams.batch_size, n_gpus, collate_fn, logger,
+                                    hparams.distributed_run, rank)
                 if rank == 0:
                     checkpoint_path = os.path.join(
                         output_directory, "checkpoint_{}".format(iteration))
                     save_checkpoint(model, optimizer, learning_rate, iteration,
-                                    checkpoint_path)                                                
+                                    checkpoint_path)
+                if val_loss_best > val_loss:
+                    print("Best validation loss improved from {:6f} to {:6f}. Save checkpoint".format(
+                        val_loss_best, val_loss))
+                    val_loss_best = val_loss
+                    checkpoint_path = os.path.join(
+                        output_directory, "best_val_checkpoint_{}".format(iteration))
+                    save_checkpoint(model, optimizer, learning_rate, iteration,
+                                    checkpoint_path)
+
 
 
 if __name__ == '__main__':
