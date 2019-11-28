@@ -53,8 +53,9 @@ def get_mel_from_tacotron2(hparams, checkpoint_path, audiopath, text):
 
 if __name__ == '__main__':
     # Inputs
-    checkpoint_path = "tacotron2/train_output/checkpoint_25000"
-    audiopath = '/data/KsponSpeech_wav/KsponSpeech_0001/KsponSpeech_000364.wav'
+    checkpoint_path = "tacotron2/train_output/checkpoint_36000"
+    # audiopath = '/data/KsponSpeech_wav/KsponSpeech_0001/KsponSpeech_000364.wav'
+    audiopath = 'data/KsponSpeech_000364.wav'
     text = '웨이브글로우는 정말 멋있어'
 
     # Load tacotron hparams
