@@ -260,7 +260,7 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
                         val_loss_best, val_loss))
                     val_loss_best = val_loss
                     checkpoint_path = os.path.join(
-                        output_directory, "best_val_checkpoint_{}".format(iteration))
+                        output_directory, "best_val".format(iteration))
                     save_checkpoint(model, optimizer, learning_rate, iteration,
                                     checkpoint_path)
 
