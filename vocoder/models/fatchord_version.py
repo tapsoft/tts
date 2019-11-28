@@ -166,7 +166,7 @@ class WaveRNN(nn.Module):
         x = F.relu(self.fc2(x))
         return self.fc3(x)
 
-    def generate(self, mels, save_path: Union[str, Path], batched, target, overlap, mu_law):
+    def generate(self, mels, save_path: Union[str, Path], batched, target, overlap, mu_law, sr):
         self.eval()
 
         device = next(self.parameters()).device  # use same device as parameters
@@ -257,7 +257,7 @@ class WaveRNN(nn.Module):
         output = output[:wave_len]
         output[-20 * self.hop_length:] *= fade_out
 
-        save_wav(output, save_path)
+        save_wav(output, save_path, sampling_rate=sr)
 
         self.train()
 
