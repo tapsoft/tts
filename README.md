@@ -13,19 +13,7 @@ We aim to build a TTS system that generates a Korean dialogue from text in the v
 
 Yet, instead of just using the complete code, we retrieved separate implementations of submodules of the model and reconstructed the pipeline.
 
-## Modules in repository
-
-```./input```: Contains user query files (input text / reference voice)
-
-```./output```: Output stored
-
-```./tacotron2```: Directory for **tacotron2-based text-to-mel spectrogram synthesizer**. Uses **RNN-based speaker embedding generator** at ```./tacotron2/speaker_embed```, pretrained on English speaker verification task.
-
-```./vocoder```: Directory for **WaveNet-based mel-to-audio vocoder**.
-
-```./past```: **[unused]** Contains **autoencoder-based, unsupervised speaker embedding generator**. As RNN-based embedder pretrained on English dataset turned out to perform better than this model, we are not using this.
-
-## Overall model description
+## Module description
 
 Our TTS model consists of 3 independently trained modules (location in repo described above).
 
@@ -53,26 +41,78 @@ Our TTS model consists of 3 independently trained modules (location in repo desc
 ---
 We constructed a merged pipeline including **module 1, 2 and 3**, so that running ```run.py``` should be sufficient.
 
-## Inference
+## How to use
 
-1. Install required packages by running following command on linux terminal.
+Before start, install required packages by running following command on linux terminal.
 ```
 pip install -r requirements.txt
 ```
+##### **Inference**
 
-2. Place input text ```input_text.txt``` and reference voice ```input_voice.wav``` in ```./input``` folder.
+1. Place input text ```input_text.txt``` and reference voice ```input_voice.wav``` in ```./input``` folder.
 
-3. Run ```run.py``` on python interpreter.
+2. Run ```run.py``` on python interpreter.
 ```
 python3 ./run.py
 ```
 
+3. Pre-trained weights and checkpoints are automatically loaded and used for inference.
+
 4. Find generated speech at ```./output/generated.wav```.
+
+##### **Optional: Synthesizer Training**
+
+1. Run ```train_tacotron2.py``` on python interpreter.
+```
+python3 ./train_tacotron2.py
+```
+
+2. Checkpoints are automatically stored (best validation loss model used).
+
+##### **Optional: Vocoder Fine-Tuning**
+
+1. Run ```train_wavernn.py``` on python interpreter.
+```
+python3 ./train_wavernn.py
+```
+
+2. Checkpoints are automatically stored (best validation loss model used).
+
+## Modules in repository
+
+```./input```: Contains user query files (input text / reference voice)
+
+```./output```: Output stored
+
+```./tacotron2```: Directory for **tacotron2-based text-to-mel spectrogram synthesizer**. Uses **RNN-based speaker embedding generator** at ```./tacotron2/speaker_embed```, pretrained on English speaker verification task.
+
+```./vocoder```: Directory for **WaveNet-based mel-to-audio vocoder**.
+
+```./past```: **[unused]** Contains **autoencoder-based, unsupervised speaker embedding generator**. As RNN-based embedder pretrained on English dataset turned out to perform better than this model, we are not using this.
 
 ## Repository structure
 
+```
+(to be completed)
+.
+project
+│   README.md
+│   file001.txt    
+│
+└───folder1
+│   │   file011.txt
+│   │   file012.txt
+│   │
+│   └───subfolder1
+│       │   file111.txt
+│       │   file112.txt
+│       │   ...
+│   
+└───folder2
+    │   file021.txt
+    │   file022.txt
+```
 
-
-## Function description
+## Detailed description
 
 
