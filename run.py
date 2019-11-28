@@ -64,7 +64,7 @@ if __name__ == '__main__':
     checkpoint_path = "tacotron2/train_output/checkpoint_36000"
     audiopath = '/data/KsponSpeech_wav/KsponSpeech_0001/KsponSpeech_000364.wav'
     # audiopath = 'data/KsponSpeech_000364.wav'
-    text = '이래도 에이 플러스를 안 주시렵니까?'
+    text = '가나다라마바사아자차카파타하'
 
     # Load tacotron hparams
     hparams = create_hparams()

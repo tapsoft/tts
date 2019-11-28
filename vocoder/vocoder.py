@@ -58,7 +58,7 @@ voc_model.load('vocoder/pretrained/voc_weights/latest_weights.pyt')
 
 def generate(mel, filename, sampling_rate):
 
-    save_path = 'export/' + filename
+    save_path = 'output/' + filename
 
     # save_attention(attention, save_path)
 

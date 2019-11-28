@@ -13,7 +13,6 @@ webrtcvad
 numpy>=1.14.0
 tqdm
 sounddevice
-inflect
 PyQt5
 multiprocess
 numba
