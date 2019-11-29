@@ -69,9 +69,9 @@ if __name__ == '__main__':
     model = load_model(hparams)
 
     # Load checkpoint
-    checkpoint_dict = torch.load(checkpoint_path, map_location='cpu')
-    model.load_state_dict(checkpoint_dict['state_dict'])
-    print("Loaded checkpoint '{}' from iteration {}".format(checkpoint_path, checkpoint_dict['iteration']))
+    #checkpoint_dict = torch.load(checkpoint_path, map_location='cpu')
+    #model.load_state_dict(checkpoint_dict['state_dict'])
+    #print("Loaded checkpoint '{}' from iteration {}".format(checkpoint_path, checkpoint_dict['iteration']))
 
     # Set model to evaluation mode
     _ = model.cuda().eval()
