@@ -1,5 +1,10 @@
+import matplotlib
+matplotlib.use('Agg')
 import torch
 import numpy as np
+import librosa
+import librosa.display
+import matplotlib.pyplot as plt
 
 from tacotron2.hparams import create_hparams
 from tacotron2.train import load_model
@@ -59,6 +64,18 @@ def mel_rescale(mel):
     return vocoder_input
 
 
+def get_mel_image(mel, imagetitle='Mel-Spectrogram', filename='melspec.png'):
+    fig = plt.figure()
+    plt.imshow(mel.squeeze().cpu().detach().numpy())
+    plt.gca().invert_yaxis()
+    plt.colorbar()
+    plt.title(imagetitle)
+    plt.xlabel('encoder timestep')
+    plt.ylabel('decoder timestep')
+    fig.savefig(filename)
+
+
+
 if __name__ == '__main__':
     # Inputs
     checkpoint_path = "tacotron2/train_output/checkpoint_36000"
@@ -78,6 +95,10 @@ if __name__ == '__main__':
 
     mel_from_wav = mel_rescale(mel)
     mel_from_tacotron2 = mel_rescale(mel_outputs)
+
+    # Save mel-spectrogram image file
+    get_mel_image(mel_from_wav, filename='mel_from_wav.png', imagetitle='mel_from_wav')
+    get_mel_image(mel_from_tacotron2, filename='mel_from_tacotron2.png', imagetitle='mel_from_tacotron2')
 
     # Generate wav file using vocoder
     # Restore sampling rate before exporting to .wav file
