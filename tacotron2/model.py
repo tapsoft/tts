@@ -512,12 +512,12 @@ class Tacotron2(nn.Module):
         text_lengths, output_lengths = text_lengths.data, output_lengths.data
 
         embedded_inputs = self.embedding(text_inputs).transpose(1, 2)
-
         encoder_outputs = self.encoder(embedded_inputs, text_lengths)
 
         # speaker_embeddings: (batch_size, 256)
         speaker_embeddings = tile(speaker_embeddings.view(speaker_embeddings.shape[0], 1, -1), 1, max_len)
         decoder_inputs = torch.cat((encoder_outputs, speaker_embeddings), 2)
+        # (batch_size, max_len, 512 + 256)
 
         mel_outputs, gate_outputs, alignments = self.decoder(
             decoder_inputs, mels, memory_lengths=text_lengths)

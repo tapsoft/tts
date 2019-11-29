@@ -1,6 +1,8 @@
 import torch
 import numpy as np
-
+import matplotlib
+matplotlib.use('AGG')
+import matplotlib.pyplot as plt
 from tacotron2.hparams import create_hparams
 from tacotron2.train import load_model
 from tacotron2.utils import load_wav_to_torch, load_filepaths_and_text
@@ -29,11 +31,7 @@ def get_mel_from_wavfile(hparams, filename):
     return mel_spec, sampling_rate
 
     
-def get_mel_from_tacotron2(hparams, checkpoint_path, audiopath, text):
-    # Load tacotron2 model with speaker embedding
-    model = load_model(hparams)
-    model.load_state_dict(torch.load(checkpoint_path)['state_dict'])
-    _ = model.cuda().eval()
+def get_mel_from_tacotron2(audiopath, text):
 
     audio, sampling_rate = load_wav_to_torch(audiopath)
     audio = audio.numpy()
@@ -60,24 +58,60 @@ def mel_rescale(mel):
 
 
 if __name__ == '__main__':
-    # Inputs
-    checkpoint_path = "tacotron2/train_output/checkpoint_36000"
-    audiopath = '/data/KsponSpeech_wav/KsponSpeech_0001/KsponSpeech_000364.wav'
-    # audiopath = 'data/KsponSpeech_000364.wav'
-    text = '가나다라마바사아자차카파타하'
 
-    # Load tacotron hparams
+    # Inputs
+    checkpoint_path = "./tacotron2/train_output/checkpoint_39000"
+    audiopath = '/data/KsponSpeech_wav/KsponSpeech_0617/KsponSpeech_616478.wav'
+    text = '약간 억지긴 한데 애들이 편리성을 추구하기 위해서 그냥 그 방 비워놓고 우도로 가는 게 낫지 않냐.'
+
+    # Load synthesizer model (speaker embedding + tacotron2 model) and hparams
     hparams = create_hparams()
+    model = load_model(hparams)
+
+    # Load checkpoint
+    checkpoint_dict = torch.load(checkpoint_path, map_location='cpu')
+    model.load_state_dict(checkpoint_dict['state_dict'])
+    print("Loaded checkpoint '{}' from iteration {}".format(checkpoint_path, checkpoint_dict['iteration']))
+
+    # Set model to evaluation mode
+    _ = model.cuda().eval()
 
     # Get mel_spec directly from wav file
     # Also retrieve original sampling rate
     mel, sr = get_mel_from_wavfile(hparams, audiopath)
 
-    # Get mel spectrogram from tacotron2 with speaker embedding
-    mel_outputs, mel_outputs_postnet, alignments = get_mel_from_tacotron2(hparams, checkpoint_path, audiopath, text)
+    # Get mel spectrogram from synthesizer
+    mel_outputs, mel_outputs_postnet, alignments = get_mel_from_tacotron2(audiopath, text)
 
+    # Rescale amplitude range to -4 ~ +4
     mel_from_wav = mel_rescale(mel)
     mel_from_tacotron2 = mel_rescale(mel_outputs)
+
+    fig = plt.figure()
+    plt.imshow(alignments.squeeze().cpu().detach().numpy())
+    plt.colorbar()
+    plt.title("alignment")
+    plt.xlabel("encoder timestep")
+    plt.ylabel("decoder timestep")
+    fig.savefig('/home/cs470/zeroshot-tts-korean/output/alignment.png')
+
+    fig = plt.figure()
+    plt.imshow(mel.squeeze().detach().numpy())
+    plt.colorbar()
+    plt.title("mel_wav")
+    fig.savefig('/home/cs470/zeroshot-tts-korean/output/mel_wav.png')
+
+    fig = plt.figure()
+    plt.imshow(mel_outputs.squeeze().cpu().detach().numpy())
+    plt.colorbar()
+    plt.title("mel_tacotron2")
+    fig.savefig('/home/cs470/zeroshot-tts-korean/output/mel_tacotron2.png')
+
+    fig = plt.figure()
+    plt.imshow(mel_outputs_postnet.squeeze().cpu().detach().numpy())
+    plt.colorbar()
+    plt.title("mel_tacotron2_postnet")
+    fig.savefig('/home/cs470/zeroshot-tts-korean/output/mel_tacotron2_postnet.png')
 
     # Generate wav file using vocoder
     # Restore sampling rate before exporting to .wav file
