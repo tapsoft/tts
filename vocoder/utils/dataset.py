@@ -3,10 +3,10 @@ import random
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data.sampler import Sampler
-from utils.dsp import *
-from utils import hparams as hp
-from utils.text import text_to_sequence
-from utils.paths import Paths
+from vocoder.utils.dsp import *
+from vocoder.utils import hparams as hp
+from vocoder.utils.text import text_to_sequence
+from vocoder.utils.paths import Paths
 from pathlib import Path
 
 
@@ -26,6 +26,8 @@ class VocoderDataset(Dataset):
         item_id = self.metadata[index]
         m = np.load(self.mel_path/f'{item_id}.npy')
         x = np.load(self.quant_path/f'{item_id}.npy')
+        # print("sizesize", m.shape(), x.shape())
+        # print("sizesize", len(m), len(x))
         return m, x
 
     def __len__(self):
@@ -73,7 +75,17 @@ def collate_vocoder(batch):
     mels = [x[0][:, mel_offsets[i]:mel_offsets[i] + mel_win] for i, x in enumerate(batch)]
 
     labels = [x[1][sig_offsets[i]:sig_offsets[i] + hp.voc_seq_len + 1] for i, x in enumerate(batch)]
-
+    # print("batch", batch)
+    # print("batch", [len(_[0]) for _ in batch])
+    # print("batch", [len(_[1]) for _ in batch])
+    # print("mels labels", len(mels), len(labels))
+    # print("mels", [[len(_) for _ in __] for __ in mels])
+    # print("labels", [len(_) for _ in labels])
+    # print("labels", labels)
+    for i, l in enumerate(labels):
+        if len(l) != 1376:
+            # print("SIZE DIFF", len(l))
+            labels[i] = np.append(l, ([0] * (1376 - len(l))))
     mels = np.stack(mels).astype(np.float32)
     labels = np.stack(labels).astype(np.int64)
 
@@ -89,7 +101,7 @@ def collate_vocoder(batch):
 
     if hp.voc_mode == 'MOL':
         y = label_2_float(y.float(), bits)
-
+    # print("sizesizesize", x.size(), y.size(), mels.size())
     return x, y, mels
 
 

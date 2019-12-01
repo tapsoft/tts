@@ -1,8 +1,8 @@
-from utils.dataset import get_vocoder_datasets
-from utils.dsp import *
-from models.fatchord_version import WaveRNN
-from utils.paths import Paths
-from utils.display import simple_table
+from vocoder.utils.dataset import get_vocoder_datasets
+from vocoder.utils.dsp import *
+from vocoder.models.fatchord_version import WaveRNN
+from vocoder.utils.paths import Paths
+from vocoder.utils.display import simple_table
 import torch
 import argparse
 from pathlib import Path
