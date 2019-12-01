@@ -80,6 +80,7 @@ project
 |   |   embedding_evaluation.py
 |   |
 │   └───text
+|   |   phoneme.py
 |   |
 │   └───train_output
 │   
