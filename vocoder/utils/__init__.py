@@ -49,6 +49,7 @@ class __HParams:
             self.configure(path)
 
     def __getattr__(self, item):
+        print("GETATTR", item)
         if not self.is_configured():
             raise AttributeError("HParams not configured yet. Call self.configure()")
         else:
