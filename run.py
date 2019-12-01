@@ -87,31 +87,38 @@ if __name__ == '__main__':
     mel_from_wav = mel_rescale(mel)
     mel_from_tacotron2 = mel_rescale(mel_outputs)
 
+    while alignments.size(1) == 1:
+        model = load_model(hparams)
+        _ = model.cuda().eval()
+
+        mel, sr = get_mel_from_wavfile(hparams, audiopath)
+        mel_outputs, mel_outputs_postnet, alignments = get_mel_from_tacotron2(audiopath, text)
+
     fig = plt.figure()
     plt.imshow(alignments.squeeze().cpu().detach().numpy())
     plt.colorbar()
     plt.title("alignment")
     plt.xlabel("encoder timestep")
     plt.ylabel("decoder timestep")
-    fig.savefig('/home/cs470/zeroshot-tts-korean/output/alignment.png')
+    fig.savefig('output/alignment.png')
 
     fig = plt.figure()
     plt.imshow(mel.squeeze().detach().numpy())
     plt.colorbar()
     plt.title("mel_wav")
-    fig.savefig('/home/cs470/zeroshot-tts-korean/output/mel_wav.png')
+    fig.savefig('output/mel_wav.png')
 
     fig = plt.figure()
     plt.imshow(mel_outputs.squeeze().cpu().detach().numpy())
     plt.colorbar()
     plt.title("mel_tacotron2")
-    fig.savefig('/home/cs470/zeroshot-tts-korean/output/mel_tacotron2.png')
+    fig.savefig('output/mel_tacotron2.png')
 
     fig = plt.figure()
     plt.imshow(mel_outputs_postnet.squeeze().cpu().detach().numpy())
     plt.colorbar()
     plt.title("mel_tacotron2_postnet")
-    fig.savefig('/home/cs470/zeroshot-tts-korean/output/mel_tacotron2_postnet.png')
+    fig.savefig('output/mel_tacotron2_postnet.png')
 
     # Generate wav file using vocoder
     # Restore sampling rate before exporting to .wav file
