@@ -60,7 +60,7 @@ def mel_rescale(mel):
 if __name__ == '__main__':
 
     # Inputs
-    checkpoint_path = "./tacotron2/train_output/checkpoint_39000"
+    checkpoint_path = "./tacotron2/train_output/checkpoint_10000"
     audiopath = '/data/KsponSpeech_wav/KsponSpeech_0617/KsponSpeech_616478.wav'
     text = '약간 억지긴 한데 애들이 편리성을 추구하기 위해서 그냥 그 방 비워놓고 우도로 가는 게 낫지 않냐.'
 
