@@ -1,8 +1,11 @@
+import matplotlib
+matplotlib.use('Agg')
 import torch
 import numpy as np
-import matplotlib
-matplotlib.use('AGG')
+import librosa
+import librosa.display
 import matplotlib.pyplot as plt
+
 from tacotron2.hparams import create_hparams
 from tacotron2.train import load_model
 from tacotron2.utils import load_wav_to_torch, load_filepaths_and_text
@@ -57,6 +60,18 @@ def mel_rescale(mel):
     return vocoder_input
 
 
+def get_mel_image(mel, imagetitle='Mel-Spectrogram', filename='melspec.png'):
+    fig = plt.figure()
+    plt.imshow(mel.squeeze().cpu().detach().numpy())
+    plt.gca().invert_yaxis()
+    plt.colorbar()
+    plt.title(imagetitle)
+    plt.xlabel('encoder timestep')
+    plt.ylabel('decoder timestep')
+    fig.savefig(filename)
+
+
+
 if __name__ == '__main__':
 
     # Inputs
@@ -86,34 +101,16 @@ if __name__ == '__main__':
     # Rescale amplitude range to -4 ~ +4
     mel_from_wav = mel_rescale(mel)
     mel_from_tacotron2 = mel_rescale(mel_outputs)
+    mel_from_tacotron2_postnet = mel_rescale(mel_outputs_postnet)
 
-    fig = plt.figure()
-    plt.imshow(alignments.squeeze().cpu().detach().numpy())
-    plt.colorbar()
-    plt.title("alignment")
-    plt.xlabel("encoder timestep")
-    plt.ylabel("decoder timestep")
-    fig.savefig('/home/cs470/zeroshot-tts-korean/output/alignment.png')
-
-    fig = plt.figure()
-    plt.imshow(mel.squeeze().detach().numpy())
-    plt.colorbar()
-    plt.title("mel_wav")
-    fig.savefig('/home/cs470/zeroshot-tts-korean/output/mel_wav.png')
-
-    fig = plt.figure()
-    plt.imshow(mel_outputs.squeeze().cpu().detach().numpy())
-    plt.colorbar()
-    plt.title("mel_tacotron2")
-    fig.savefig('/home/cs470/zeroshot-tts-korean/output/mel_tacotron2.png')
-
-    fig = plt.figure()
-    plt.imshow(mel_outputs_postnet.squeeze().cpu().detach().numpy())
-    plt.colorbar()
-    plt.title("mel_tacotron2_postnet")
-    fig.savefig('/home/cs470/zeroshot-tts-korean/output/mel_tacotron2_postnet.png')
+    # Save mel-spectrogram image file
+    get_mel_image(mel_from_wav, filename='mel_wav.png', imagetitle='mel_wav')
+    get_mel_image(mel_from_tacotron2, filename='mel_tacotron2.png', imagetitle='mel_tacotron2')
+    get_mel_image(mel_from_tacotron2_postnet, filename='mel_tacotron2_postnet.png', imagetitle='mel_tacotron2_postnet')
+    get_mel_image(alignments, filename='alignments.png', imagetitle='alignments')
 
     # Generate wav file using vocoder
     # Restore sampling rate before exporting to .wav file
     vocoder_generate(mel_from_wav, 'mel_from_wav.wav', sampling_rate=sr)
     vocoder_generate(mel_from_tacotron2, 'mel_from_tacotron2.wav', sampling_rate=sr)
+    vocoder_generate(mel_from_tacotron2_postnet, 'mel_from_tacotron2_postnet.wav', sampling_rate=sr)

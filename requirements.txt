@@ -1,9 +1,10 @@
+torch
 matplotlib==2.1.0
 tensorflow
 inflect==0.2.5
 librosa==0.6.0
 scipy==1.0.0
-tensorboardX==1.1
+tensorboardX==1.9
 Unidecode==1.0.22
 pillow
 tensorflow-gpu>=1.10.0,<=1.14.0
@@ -16,3 +17,4 @@ sounddevice
 PyQt5
 multiprocess
 numba
+
