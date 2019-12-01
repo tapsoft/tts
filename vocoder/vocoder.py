@@ -56,12 +56,11 @@ voc_model = WaveRNN(rnn_dims=hp.voc_rnn_dims,
 voc_model.load('vocoder/pretrained/voc_weights/latest_weights.pyt')
 
 
+# Get mel-spectrogram and generate wav file
 def generate(mel, filename, sampling_rate):
-
     save_path = 'output/' + filename
 
-    # save_attention(attention, save_path)
-
+    # Scale mel-spectrogram
     new_mel = mel.clone().detach()
     del mel
     new_mel = (new_mel + 4.) / 8.
