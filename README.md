@@ -11,7 +11,7 @@ Project goal: **Option 2** - we are solving our own problem.
 Proposal link: https://docs.google.com/document/d/1x8I7riwTYUAlwgf8Ou8jAZ57uNL79e8VIzXJ8rxSlEg/  
 Korean multispeaker speech dataset: http://www.aihub.or.kr/content/552
 
-We aimed to build a TTS system that generates a Korean dialogue from text in the voice of unseen speaker, given only few seconds of speech audio. For this task, we directly applied the model in the following paper:
+We aimed to build a TTS system that generates a Korean dialogue from text in the voice of unseen speaker, given only few seconds of speech audio. For this task, we applied the model in the following paper:
 
 **Ye Jia et al. (2018). Transfer Learning from Speaker Verification to Multispeaker Text-To-Speech Synthesis. NIPS.**
 
@@ -75,20 +75,22 @@ Before start, install required packages by running following command on linux te
 ```
 pip install -r requirements.txt
 ```
-**Inference**
+**Inference** (You will be able to run this)
 
-1. Place input text ```input_text.txt``` and reference voice ```input_voice.wav``` in ```./input``` folder.
+1. Download model checkpoint file from https://drive.google.com/open?id=1L5z0SQO9E3m8mKx7cb-yiNqXrYJI7_I7 to any directory you want, and specify it in ```checkpoint_path``` variable in ``run.py````.
 
-2. Run ```run.py``` on python interpreter.
+2. Place input text ```input_text.txt``` and reference voice ```input_voice.wav``` in ```./input``` folder.
+
+3. Run ```run.py``` on python interpreter.
 ```
 python3 ./run.py
 ```
 
-3. Pre-trained weights and checkpoints are automatically loaded and used for inference.
-
 4. Find generated speech at ```./output/generated.wav```.
 
-**Optional: Synthesizer Training**
+**Training and evaluation** (Dataset not included, will not run)
+
+*Synthesizer Training*
 
 1. Run ```train_tacotron2.py``` on python interpreter.
 ```
@@ -97,7 +99,7 @@ python3 ./train_tacotron2.py
 
 2. Checkpoints are automatically stored (best validation loss model used).
 
-**Optional: Vocoder Fine-Tuning**
+*Vocoder Fine-Tuning*
 
 1. Run ```train_wavernn.py``` on python interpreter.
 ```
@@ -107,39 +109,49 @@ python3 ./train_wavernn.py
 2. Checkpoints are automatically stored (best validation loss model used).
 
 ## Repository structure
+```
+Brief overview
+.
+project
+│   README.md
+│   requirements.txt    
+│   run.py    
+│   train_tacotron2.py    
+│   train_wavernn.py    
+│   
+└───documents
+|   |   proposal.pdf
+│   └───references
+│   
+└───input
+│   │   input_text.txt
+│   │   input_voice.wav
+│   
+└───output
+│   │   mel_from_tacotron2.wav
+|
+└───preprocessing
+│   
+└───tacotron2
+│   └───speaker_embed
+|   |   embedding_evaluation.py
+|   |
+│   └───speaker_embed_unsupervised
+|   |   embedding_evaluation.py
+|   |
+│   └───text
+|   |
+│   └───train_output
+│   
+└───vocoder
+```
 
 ```./input```: Contains user query files (input text / reference voice)
 
 ```./output```: Output stored
 
-```./tacotron2```: Directory for **tacotron2-based text-to-mel spectrogram synthesizer**. Uses **RNN-based speaker embedding generator** at ```./tacotron2/speaker_embed```, pretrained on English speaker verification task.
+```./preprocessing```: Contains code for text parsing and preprocessing.
+
+```./tacotron2```: Directory for **tacotron2-based text-to-spectrogram synthesizer**. Uses **RNN-based speaker embedding generator** at ```./tacotron2/speaker_embed```, pretrained on English speaker verification task. ```./tacotron2/speaker_embed_unsupervised``` contains *autoencoder-based, unsupervised speaker embedding generator*, which is not used.
 
 ```./vocoder```: Directory for **WaveNet-based mel-to-audio vocoder**.
-
-```./past```: **[unused]** Contains **autoencoder-based, unsupervised speaker embedding generator**. As RNN-based embedder pretrained on English dataset turned out to perform better than this model, we are not using this.
-
-```
-(to be completed)
-.
-project
-│   README.md
-│   file001.txt    
-│
-└───folder1
-│   │   file011.txt
-│   │   file012.txt
-│   │
-│   └───subfolder1
-│       │   file111.txt
-│       │   file112.txt
-│       │   ...
-│   
-└───folder2
-    │   file021.txt
-    │   file022.txt
-```
-
-
-## Detailed description
-
-
