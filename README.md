@@ -77,7 +77,7 @@ pip install -r requirements.txt
 ```
 **Inference** (You will be able to run this)
 
-1. Download model checkpoint file from https://drive.google.com/open?id=1L5z0SQO9E3m8mKx7cb-yiNqXrYJI7_I7 to any directory you want, and specify it in ```checkpoint_path``` variable in ``run.py````.
+1. Download model checkpoint file from https://drive.google.com/open?id=1L5z0SQO9E3m8mKx7cb-yiNqXrYJI7_I7 to any directory you want, and specify it in ```checkpoint_path``` variable in ```run.py```.
 
 2. Place input text ```input_text.txt``` and reference voice ```input_voice.wav``` in ```./input``` folder.
 
