@@ -75,9 +75,9 @@ def get_mel_image(mel, imagetitle='Mel-Spectrogram', filename='melspec.png'):
 if __name__ == '__main__':
 
     # Inputs
-    checkpoint_path = "./tacotron2/train_output/checkpoint_39000"
-    audiopath = '/data/KsponSpeech_wav/KsponSpeech_0617/KsponSpeech_616478.wav'
-    text = '약간 억지긴 한데 애들이 편리성을 추구하기 위해서 그냥 그 방 비워놓고 우도로 가는 게 낫지 않냐.'
+    checkpoint_path = "pretrained/checkpoint_41000"
+    audiopath = 'input/input_voice.wav'
+    text = '가나다라마바사아자차카타파하'
 
     # Load synthesizer model (speaker embedding + tacotron2 model) and hparams
     hparams = create_hparams()
@@ -104,10 +104,10 @@ if __name__ == '__main__':
     mel_from_tacotron2_postnet = mel_rescale(mel_outputs_postnet)
 
     # Save mel-spectrogram image file
-    get_mel_image(mel_from_wav, filename='mel_wav.png', imagetitle='mel_wav')
-    get_mel_image(mel_from_tacotron2, filename='mel_tacotron2.png', imagetitle='mel_tacotron2')
-    get_mel_image(mel_from_tacotron2_postnet, filename='mel_tacotron2_postnet.png', imagetitle='mel_tacotron2_postnet')
-    get_mel_image(alignments, filename='alignments.png', imagetitle='alignments')
+    get_mel_image(mel_from_wav, filename='output/mel_wav.png', imagetitle='mel_wav')
+    get_mel_image(mel_from_tacotron2, filename='output/mel_tacotron2.png', imagetitle='mel_tacotron2')
+    get_mel_image(mel_from_tacotron2_postnet, filename='output/mel_tacotron2_postnet.png', imagetitle='mel_tacotron2_postnet')
+    get_mel_image(alignments, filename='output/alignments.png', imagetitle='alignments')
 
     # Generate wav file using vocoder
     # Restore sampling rate before exporting to .wav file
