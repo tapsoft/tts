@@ -1,4 +1,4 @@
-########### decomposition to syllables ###########
+########### further decomposition to syllables ###########
 # to use, replace text_to_sequence(text) in __init.py__ to
 '''
 def text_to_sequence(text):
