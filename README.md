@@ -53,6 +53,7 @@ Brief overview
 .
 project
 │   README.md
+|   team18_final_report.pdf
 │   requirements.txt    
 │   run.py    
 │   train_tacotron2.py    
@@ -95,7 +96,6 @@ project
 
 Our TTS model consists of 3 independently trained modules (location in repo described above). We constructed a merged pipeline including **module 1, 2 and 3**, so that running ```run.py``` should be sufficient.
 
----  
 **1. Speaker embedding generator** (LSTM-based, Trained on English speaker verification task)  
 - From several seconds of voice sample in ```.wav``` format, generates 256-dim vector encoding speaker identity.  
 - Source: GE2E (https://github.com/CorentinJ/Real-Time-Voice-Cloning)
@@ -111,4 +111,3 @@ Our TTS model consists of 3 independently trained modules (location in repo desc
 *4. [unused] Speaker embedding generator* (autoencoder-based, implemented by us, trained unsupervisedly (details in report))  
 - From several seconds of voice sample in ```.wav``` format, generates 256-dim vector encoding speaker identity.  
 - Turned out to be less effective than training **module 1** on English dataset, so not used  
----
