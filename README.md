@@ -25,7 +25,7 @@ Before start, install required packages by running following command on linux te
 pip install -r requirements.txt
 ```
 
-**Inference** (You will be able to run this)
+**Inference:** You should be able to run this.
 
 1. Download model checkpoint file from https://drive.google.com/open?id=1L5z0SQO9E3m8mKx7cb-yiNqXrYJI7_I7 to any directory you want, and specify it in ```checkpoint_path``` variable in ```run.py```.
 
@@ -38,7 +38,7 @@ python3 ./run.py
 
 4. Find generated speech at ```./output/generated.wav```.
 
-**Training and evaluation of submodules** (Dataset not included, will not run)
+**Training and evaluation of submodules:** Dataset not included, will not run.
 
 *Synthesizer training*
 ```
