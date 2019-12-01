@@ -39,6 +39,7 @@ python3 ./train_tacotron2.py
 ```  
 *Vocoder fine-tuning*
 ```
+python3 ./vocoder_preprocess.py --path=YOUR_DATASET_DIRECTORY
 python3 ./train_wavernn.py
 ```  
 *Speaker encoder evaluation (PCA and t-SNE)*
@@ -80,6 +81,7 @@ project
 |   |   embedding_evaluation.py
 |   |
 │   └───text
+|   |   phoneme.py
 |   |
 │   └───train_output
 │   
