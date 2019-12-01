@@ -31,7 +31,7 @@ python3 ./run.py
 ```  
 4. Find generated speech at ```./output/generated.wav```.
 
-*Submodule training and evaluation:* Dataset not included, will not run.
+***Submodule training and evaluation:*** Dataset not included, will not run.
 
 *Synthesizer training*
 ```
