@@ -14,7 +14,6 @@ import argparse
 from vocoder.utils import data_parallel_workaround
 from vocoder.utils.checkpoints import save_checkpoint, restore_checkpoint
 
-
 def main():
 
     # Parse Arguments
@@ -27,15 +26,30 @@ def main():
     parser.add_argument('--hp_file', metavar='FILE', default='hparams.py', help='The file to use for the hyperparameters')
     args = parser.parse_args()
 
+    hp.training_files = "tacotron2/filelists/transcripts_korean_final_final.txt"
+    hp.validation_files = "tacotron2/filelists/transcripts_korean_final_validate.txt"
+    hp.filter_length = 1024
+    hp.n_mel_channels = 80
+    hp.sampling_rate = 16000
+    hp.mel_fmin = 0.0
+    hp.mel_fmax = 8000.0
+    hp.max_wav_value = 32768.0
+    hp.n_frames_per_step = 1
+    # hp.data_path = "../data/"
+
+    # hp.win_length = 1024
+
+
     hp.configure(args.hp_file)  # load hparams from file
     if args.lr is None:
         args.lr = hp.voc_lr
     if args.batch_size is None:
         args.batch_size = hp.voc_batch_size
 
-    paths = Paths(hp.data_path, hp.voc_model_id, hp.tts_model_id)
+    paths = Paths("../data/", hp.voc_model_id, hp.tts_model_id)
+    # paths = Paths(hp.data_path, hp.voc_model_id, hp.tts_model_id)
 
-    batch_size = args.batch_size
+    batch_size = 64
     force_train = args.force_train
     train_gta = args.gta
     lr = args.lr
@@ -70,7 +84,7 @@ def main():
     optimizer = optim.Adam(voc_model.parameters())
     restore_checkpoint('voc', paths, voc_model, optimizer, create_if_missing=True)
 
-    train_set, test_set = get_vocoder_datasets(paths.data, batch_size, train_gta)
+    train_set, test_set = get_vocoder_datasets(paths.data, batch_size, train_gta, hp)
 
     total_steps = 10_000_000 if force_train else hp.voc_total_steps
 
@@ -88,6 +102,79 @@ def main():
     print('To continue training increase voc_total_steps in hparams.py or use --force_train')
 
 
+from tacotron2.utils import load_filepaths_and_text, load_wav_to_torch
+import random
+# from run import get_mel_from_wavfile
+import tacotron2.layers as layers
+
+def get_mel_from_wavfile(hparams, filename):
+    # print("filter, window", hparams.filter_length, hparams.win_length)
+    # print("filename", filename)
+    stft = layers.TacotronSTFT(
+        hparams.filter_length, hparams.hop_length, hparams.filter_length,
+        # hparams.filter_length, hparams.hop_length, hparams.win_length,
+        hparams.n_mel_channels, hparams.sampling_rate, hparams.mel_fmin,
+        hparams.mel_fmax)
+
+    audio, sampling_rate = load_wav_to_torch(filename)
+    if sampling_rate != stft.sampling_rate:
+        raise ValueError("{} {} SR doesn't match target {} SR".format(
+            sampling_rate, stft.sampling_rate))
+    audio_norm = audio / hparams.max_wav_value
+    audio_norm = audio_norm.unsqueeze(0)
+    audio_norm = torch.autograd.Variable(audio_norm, requires_grad=False)
+    mel_spec = stft.mel_spectrogram(audio_norm)
+    # mel_spec = torch.squeeze(mel_spec, 0)
+
+    return mel_spec
+
+
+from torch.utils.data.dataloader import DataLoader
+from vocoder.utils.dataset import collate_vocoder
+from vocoder.utils.dataset import VocoderDataset
+
+def get_vocoder_datasets(path: Paths, batch_size, train_gta, hparams):
+    print("path", path)
+    # train_dataset = MelLoader(hparams.training_files, hparams)
+    # test_dataset = MelLoader(hparams.validation_files, hparams)
+    # collate_fn = MelCollate(hparams.n_frames_per_step)
+
+    with open('tacotron2/filelists/transcripts_korean_final_final.txt', encoding='utf-8') as f:
+        train_ids = [line.strip().split("|")[0].split("/")[-1][:-4] for line in f]
+        # print("data", dataset[:3])
+    with open('tacotron2/filelists/transcripts_korean_final_validate.txt', encoding='utf-8') as f:
+        test_ids = [line.strip().split("|")[0].split("/")[-1][:-4] for line in f]
+    dataset_rate = 0.1
+    train_ids = train_ids[:int(len(train_ids) * dataset_rate)]
+    test_ids = test_ids[:int(len(test_ids) * dataset_rate)]
+    print("batch size", batch_size)
+    # dataset_ids = [x[0] for x in dataset]
+
+
+    # random.seed(1234)
+    # random.shuffle(dataset_ids)
+
+    # test_ids = dataset_ids[-hp.voc_test_samples:]
+    # train_ids = dataset_ids[:-hp.voc_test_samples]
+
+    train_dataset = VocoderDataset(path, train_ids, train_gta)
+    test_dataset = VocoderDataset(path, test_ids, train_gta)
+
+    train_set = DataLoader(train_dataset,
+                           collate_fn=collate_vocoder,
+                           batch_size=batch_size,
+                           num_workers=8,
+                           shuffle=True,
+                           pin_memory=True)
+
+    test_set = DataLoader(test_dataset,
+                          batch_size=1,
+                          num_workers=8,
+                          shuffle=False,
+                          pin_memory=True)
+
+    return train_set, test_set
+
 def voc_train_loop(paths: Paths, model: WaveRNN, loss_func, optimizer, train_set, test_set, lr, total_steps):
     # Use same device as model parameters
     device = next(model.parameters()).device
@@ -103,12 +190,14 @@ def voc_train_loop(paths: Paths, model: WaveRNN, loss_func, optimizer, train_set
         running_loss = 0.
 
         for i, (x, y, m) in enumerate(train_set, 1):
+            # print("size", x.size())
             x, m, y = x.to(device), m.to(device), y.to(device)
 
             # Parallelize model onto GPUS using workaround due to python bug
             if device.type == 'cuda' and torch.cuda.device_count() > 1:
                 y_hat = data_parallel_workaround(model, x, m)
             else:
+                # print("size", x.size(), m.size())
                 y_hat = model(x, m)
 
             if model.mode == 'RAW':
